@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LeadController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.lead.controller</a> &gt; <span class="el_source">LeadController.java</span></div><h1>LeadController.java</h1><pre class="source lang-java linenums">package com.crm.lead.controller;
+
+import com.crm.lead.api.dto.*;
+import com.crm.lead.service.LeadService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping(&quot;/api/leads&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;Lead Intelligence &amp; Intake&quot;, description = &quot;Endpoints for lead intake, synchronous scoring, and paginated lead discovery&quot;)
+public class LeadController {
+
+    private final LeadService leadService;
+
+    @PostMapping
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')&quot;)
+    @Operation(summary = &quot;Intake and score a new lead&quot;, description = &quot;Calculates a 0-100 weighted lead score synchronously and triggers asynchronous Kafka auto-assignment&quot;)
+    public ResponseEntity&lt;LeadResponseDto&gt; intakeLead(@Valid @RequestBody LeadCreateDto dto) {
+<span class="fc" id="L29">        LeadResponseDto response = leadService.createAndScoreLead(dto);</span>
+<span class="fc" id="L30">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')&quot;)
+    @Operation(summary = &quot;Get lead by ID&quot;, description = &quot;Retrieves full lead details by ID including current status, score, and assigned sales rep&quot;)
+    public ResponseEntity&lt;LeadResponseDto&gt; getLeadById(@PathVariable UUID id) {
+<span class="nc" id="L37">        LeadResponseDto response = leadService.getLeadById(id);</span>
+<span class="nc" id="L38">        return ResponseEntity.ok(response);</span>
+    }
+
+    @GetMapping
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')&quot;)
+    @Operation(summary = &quot;Search and filter leads&quot;, description = &quot;Retrieves paginated leads filtered by status and score range&quot;)
+    public ResponseEntity&lt;Page&lt;LeadResponseDto&gt;&gt; getLeads(
+            @RequestParam(required = false) LeadStatus status,
+            @RequestParam(required = false) Integer minScore,
+            @RequestParam(required = false) Integer maxScore,
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @RequestParam(defaultValue = &quot;10&quot;) int size
+    ) {
+<span class="fc" id="L51">        Page&lt;LeadResponseDto&gt; response = leadService.getLeadsWithFilters(status, minScore, maxScore, page, size);</span>
+<span class="fc" id="L52">        return ResponseEntity.ok(response);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

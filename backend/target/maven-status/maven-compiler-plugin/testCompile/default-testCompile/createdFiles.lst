@@ -1,0 +1,8 @@
+com\crm\lead\LeadIntelligenceIntegrationTest.class
+com\crm\lead\LeadScoringServiceTest.class
+com\crm\opportunity\OpportunityPipelineIntegrationTest.class
+com\crm\NexusCrmApplicationTests.class
+com\crm\identity\AuthIntegrationTest.class
+com\crm\customer\CustomerConversionIntegrationTest.class
+com\crm\notification\NotificationIntegrationTest.class
+com\crm\opportunity\OpportunityStageValidationTest.class

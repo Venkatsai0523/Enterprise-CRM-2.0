@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.infrastructure.security</a> &gt; <span class="el_source">SecurityConfig.java</span></div><h1>SecurityConfig.java</h1><pre class="source lang-java linenums">package com.crm.infrastructure.security;
+
+import com.crm.identity.service.CustomUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+@RequiredArgsConstructor
+@SuppressWarnings(&quot;null&quot;)
+public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final CustomUserDetailsService userDetailsService;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+<span class="fc" id="L34">        http</span>
+<span class="fc" id="L35">            .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="fc" id="L36">            .sessionManagement(session -&gt; session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))</span>
+<span class="fc" id="L37">            .authenticationProvider(authenticationProvider())</span>
+<span class="fc" id="L38">            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)</span>
+<span class="fc" id="L39">            .exceptionHandling(ex -&gt; ex</span>
+<span class="fc" id="L40">                .authenticationEntryPoint((request, response, authException) -&gt; {</span>
+<span class="fc" id="L41">                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
+<span class="fc" id="L42">                    response.setContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L43">                    response.getWriter().write(String.format(</span>
+<span class="fc" id="L44">                        &quot;{\&quot;timestamp\&quot;:\&quot;%s\&quot;,\&quot;status\&quot;:401,\&quot;error\&quot;:\&quot;Unauthorized\&quot;,\&quot;message\&quot;:\&quot;Full authentication is required to access this resource\&quot;,\&quot;path\&quot;:\&quot;%s\&quot;}&quot;,</span>
+<span class="fc" id="L45">                        java.time.Instant.now(),</span>
+<span class="fc" id="L46">                        request.getRequestURI()</span>
+                    ));
+<span class="fc" id="L48">                })</span>
+            )
+<span class="fc" id="L50">            .authorizeHttpRequests(auth -&gt; auth</span>
+<span class="fc" id="L51">                .requestMatchers(</span>
+<span class="fc" id="L52">                    &quot;/actuator/**&quot;,</span>
+<span class="fc" id="L53">                    &quot;/swagger-ui.html&quot;,</span>
+<span class="fc" id="L54">                    &quot;/swagger-ui/**&quot;,</span>
+<span class="fc" id="L55">                    &quot;/v3/api-docs/**&quot;,</span>
+<span class="fc" id="L56">                    &quot;/api/auth/**&quot;</span>
+<span class="fc" id="L57">                ).permitAll()</span>
+<span class="fc" id="L58">                .anyRequest().authenticated()</span>
+            );
+
+<span class="fc" id="L61">        return http.build();</span>
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+<span class="fc" id="L66">        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();</span>
+<span class="fc" id="L67">        authProvider.setUserDetailsService(userDetailsService);</span>
+<span class="fc" id="L68">        authProvider.setPasswordEncoder(passwordEncoder());</span>
+<span class="fc" id="L69">        return authProvider;</span>
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+<span class="fc" id="L74">        return config.getAuthenticationManager();</span>
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+<span class="fc" id="L79">        return new BCryptPasswordEncoder();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

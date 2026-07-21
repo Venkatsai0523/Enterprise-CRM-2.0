@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NotificationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.notification.controller</a> &gt; <span class="el_source">NotificationController.java</span></div><h1>NotificationController.java</h1><pre class="source lang-java linenums">package com.crm.notification.controller;
+
+import com.crm.notification.api.dto.NotificationResponseDto;
+import com.crm.notification.service.NotificationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping(&quot;/api/notifications&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;Notifications&quot;, description = &quot;Endpoints for user notifications generated from real-time domain events&quot;)
+public class NotificationController {
+
+    private final NotificationService notificationService;
+
+    @GetMapping
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')&quot;)
+    @Operation(summary = &quot;Get user notifications&quot;, description = &quot;Retrieves paginated notifications for a recipient ID&quot;)
+    public ResponseEntity&lt;Page&lt;NotificationResponseDto&gt;&gt; getNotifications(
+            @RequestParam UUID recipientId,
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @RequestParam(defaultValue = &quot;10&quot;) int size
+    ) {
+<span class="fc" id="L31">        Page&lt;NotificationResponseDto&gt; response = notificationService.getNotificationsForRecipient(recipientId, page, size);</span>
+<span class="fc" id="L32">        return ResponseEntity.ok(response);</span>
+    }
+
+    @PatchMapping(&quot;/{id}/read&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')&quot;)
+    @Operation(summary = &quot;Mark notification as read&quot;, description = &quot;Updates status of notification to read&quot;)
+    public ResponseEntity&lt;NotificationResponseDto&gt; markAsRead(@PathVariable UUID id) {
+<span class="fc" id="L39">        NotificationResponseDto response = notificationService.markAsRead(id);</span>
+<span class="fc" id="L40">        return ResponseEntity.ok(response);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

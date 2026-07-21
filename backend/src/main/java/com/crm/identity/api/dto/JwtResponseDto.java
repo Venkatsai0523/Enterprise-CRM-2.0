@@ -1,0 +1,24 @@
+package com.crm.identity.api.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Set;
+import java.util.UUID;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class JwtResponseDto {
+
+    private String token;
+    private String refreshToken;
+    @Builder.Default
+    private String type = "Bearer";
+    private UUID id;
+    private String email;
+    private Set<String> roles;
+}

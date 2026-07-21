@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.identity.service</a> &gt; <span class="el_source">AuthService.java</span></div><h1>AuthService.java</h1><pre class="source lang-java linenums">package com.crm.identity.service;
+
+import com.crm.common.exception.BadRequestException;
+import com.crm.common.exception.ResourceNotFoundException;
+import com.crm.identity.api.IdentityApi;
+import com.crm.identity.api.dto.*;
+import com.crm.identity.entity.Role;
+import com.crm.identity.entity.User;
+import com.crm.identity.mapper.UserMapper;
+import com.crm.identity.repository.RoleRepository;
+import com.crm.identity.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@SuppressWarnings(&quot;null&quot;)
+public class AuthService implements IdentityApi {
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final CustomUserDetailsService userDetailsService;
+    private final UserMapper userMapper;
+
+    @Transactional
+    public UserResponseDto register(UserRegistrationDto dto) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (userRepository.existsByEmail(dto.getEmail())) {</span>
+<span class="fc" id="L42">            throw new BadRequestException(&quot;Email is already registered: &quot; + dto.getEmail());</span>
+        }
+
+<span class="pc bpc" id="L45" title="2 of 4 branches missed.">        String targetRoleName = (dto.getRoleName() != null &amp;&amp; !dto.getRoleName().isBlank())</span>
+<span class="fc" id="L46">                ? dto.getRoleName()</span>
+<span class="nc" id="L47">                : &quot;ROLE_SALES_REP&quot;;</span>
+
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (!targetRoleName.startsWith(&quot;ROLE_&quot;)) {</span>
+<span class="nc" id="L50">            targetRoleName = &quot;ROLE_&quot; + targetRoleName;</span>
+        }
+
+<span class="fc" id="L53">        Role role = roleRepository.findByName(targetRoleName)</span>
+<span class="pc" id="L54">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Role not found: &quot; + dto.getRoleName()));</span>
+
+<span class="fc" id="L56">        User user = User.builder()</span>
+<span class="fc" id="L57">                .email(dto.getEmail())</span>
+<span class="fc" id="L58">                .passwordHash(passwordEncoder.encode(dto.getPassword()))</span>
+<span class="fc" id="L59">                .firstName(dto.getFirstName())</span>
+<span class="fc" id="L60">                .lastName(dto.getLastName())</span>
+<span class="fc" id="L61">                .enabled(true)</span>
+<span class="fc" id="L62">                .roles(Set.of(role))</span>
+<span class="fc" id="L63">                .build();</span>
+
+<span class="fc" id="L65">        User savedUser = userRepository.save(user);</span>
+<span class="fc" id="L66">        return userMapper.toDto(savedUser);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public JwtResponseDto login(LoginRequestDto dto) {
+<span class="fc" id="L71">        authenticationManager.authenticate(</span>
+<span class="fc" id="L72">                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())</span>
+        );
+
+<span class="fc" id="L75">        User user = userRepository.findByEmail(dto.getEmail())</span>
+<span class="pc" id="L76">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found: &quot; + dto.getEmail()));</span>
+
+<span class="fc" id="L78">        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());</span>
+<span class="fc" id="L79">        String accessToken = jwtService.generateToken(userDetails);</span>
+<span class="fc" id="L80">        String refreshToken = jwtService.generateRefreshToken(userDetails);</span>
+
+<span class="fc" id="L82">        Set&lt;String&gt; roleNames = user.getRoles().stream()</span>
+<span class="fc" id="L83">                .map(Role::getName)</span>
+<span class="fc" id="L84">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L86">        return JwtResponseDto.builder()</span>
+<span class="fc" id="L87">                .token(accessToken)</span>
+<span class="fc" id="L88">                .refreshToken(refreshToken)</span>
+<span class="fc" id="L89">                .type(&quot;Bearer&quot;)</span>
+<span class="fc" id="L90">                .id(user.getId())</span>
+<span class="fc" id="L91">                .email(user.getEmail())</span>
+<span class="fc" id="L92">                .roles(roleNames)</span>
+<span class="fc" id="L93">                .build();</span>
+    }
+
+    @Transactional(readOnly = true)
+    public JwtResponseDto refreshToken(TokenRefreshRequestDto dto) {
+<span class="nc" id="L98">        String refreshToken = dto.getRefreshToken();</span>
+<span class="nc" id="L99">        String username = jwtService.extractUsername(refreshToken);</span>
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (username != null) {</span>
+<span class="nc" id="L102">            UserDetails userDetails = userDetailsService.loadUserByUsername(username);</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">            if (jwtService.isTokenValid(refreshToken, userDetails)) {</span>
+<span class="nc" id="L104">                User user = userRepository.findByEmail(username)</span>
+<span class="nc" id="L105">                        .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found: &quot; + username));</span>
+
+<span class="nc" id="L107">                String newAccessToken = jwtService.generateToken(userDetails);</span>
+<span class="nc" id="L108">                String newRefreshToken = jwtService.generateRefreshToken(userDetails);</span>
+
+<span class="nc" id="L110">                Set&lt;String&gt; roleNames = user.getRoles().stream()</span>
+<span class="nc" id="L111">                        .map(Role::getName)</span>
+<span class="nc" id="L112">                        .collect(Collectors.toSet());</span>
+
+<span class="nc" id="L114">                return JwtResponseDto.builder()</span>
+<span class="nc" id="L115">                        .token(newAccessToken)</span>
+<span class="nc" id="L116">                        .refreshToken(newRefreshToken)</span>
+<span class="nc" id="L117">                        .type(&quot;Bearer&quot;)</span>
+<span class="nc" id="L118">                        .id(user.getId())</span>
+<span class="nc" id="L119">                        .email(user.getEmail())</span>
+<span class="nc" id="L120">                        .roles(roleNames)</span>
+<span class="nc" id="L121">                        .build();</span>
+            }
+        }
+<span class="nc" id="L124">        throw new BadRequestException(&quot;Invalid or expired refresh token&quot;);</span>
+    }
+
+    // --- IdentityApi Implementation ---
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional&lt;UserResponseDto&gt; findUserById(UUID userId) {
+<span class="nc" id="L132">        return userRepository.findById(userId).map(userMapper::toDto);</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional&lt;UserResponseDto&gt; findUserByEmail(String email) {
+<span class="fc" id="L138">        return userRepository.findByEmail(email).map(userMapper::toDto);</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsById(UUID userId) {
+<span class="nc" id="L144">        return userRepository.existsById(userId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

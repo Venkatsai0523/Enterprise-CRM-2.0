@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LeadService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.lead.service</a> &gt; <span class="el_source">LeadService.java</span></div><h1>LeadService.java</h1><pre class="source lang-java linenums">package com.crm.lead.service;
+
+import com.crm.audit.api.AuditApi;
+import com.crm.common.exception.ResourceNotFoundException;
+import com.crm.infrastructure.kafka.KafkaEventPublisher;
+import com.crm.lead.api.LeadApi;
+import com.crm.lead.api.dto.*;
+import com.crm.lead.api.event.LeadScoredEvent;
+import com.crm.lead.entity.Lead;
+import com.crm.lead.mapper.LeadMapper;
+import com.crm.lead.repository.LeadRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+<span class="fc" id="L25">@Slf4j</span>
+@SuppressWarnings(&quot;null&quot;)
+public class LeadService implements LeadApi {
+
+    private final LeadRepository leadRepository;
+    private final LeadMapper leadMapper;
+    private final LeadScoringService leadScoringService;
+    private final KafkaEventPublisher eventPublisher;
+    private final AuditApi auditApi;
+
+<span class="fc" id="L35">    public static final String TOPIC_LEAD_SCORED = &quot;lead.scored&quot;;</span>
+
+    @Transactional
+    public LeadResponseDto createAndScoreLead(LeadCreateDto dto) {
+<span class="fc" id="L39">        Lead lead = leadMapper.toEntity(dto);</span>
+<span class="fc" id="L40">        lead.setStatus(LeadStatus.NEW);</span>
+
+        // 1. Calculate score synchronously
+<span class="fc" id="L43">        int score = leadScoringService.calculateScore(lead);</span>
+<span class="fc" id="L44">        lead.setScore(score);</span>
+<span class="fc" id="L45">        lead.setStatus(LeadStatus.SCORED);</span>
+
+<span class="fc" id="L47">        Lead savedLead = leadRepository.save(lead);</span>
+<span class="fc" id="L48">        log.info(&quot;Lead created and scored synchronously. Lead ID: {}, Score: {}&quot;, savedLead.getId(), score);</span>
+
+        // Record Audit
+<span class="fc" id="L51">        auditApi.recordAudit(&quot;LEAD&quot;, savedLead.getId().toString(), &quot;LEAD_CREATED&quot;, &quot;system&quot;, null, &quot;SCORED&quot;);</span>
+
+        // 2. Publish LeadScoredEvent to Kafka asynchronously
+<span class="fc" id="L54">        LeadScoredEvent event = LeadScoredEvent.builder()</span>
+<span class="fc" id="L55">                .leadId(savedLead.getId())</span>
+<span class="fc" id="L56">                .email(savedLead.getEmail())</span>
+<span class="fc" id="L57">                .companyName(savedLead.getCompanyName())</span>
+<span class="fc" id="L58">                .score(score)</span>
+<span class="fc" id="L59">                .build();</span>
+
+<span class="fc" id="L61">        eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);</span>
+
+<span class="fc" id="L63">        return leadMapper.toDto(savedLead);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public LeadResponseDto getLeadById(UUID id) {
+<span class="fc" id="L68">        Lead lead = leadRepository.findById(id)</span>
+<span class="pc" id="L69">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Lead not found with ID: &quot; + id));</span>
+<span class="fc" id="L70">        return leadMapper.toDto(lead);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public Page&lt;LeadResponseDto&gt; getLeadsWithFilters(LeadStatus status, Integer minScore, Integer maxScore, int page, int size) {
+<span class="fc" id="L75">        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));</span>
+<span class="fc" id="L76">        return leadRepository.findWithFilters(status, minScore, maxScore, pageRequest)</span>
+<span class="fc" id="L77">                .map(leadMapper::toDto);</span>
+    }
+
+    // --- LeadApi Implementation ---
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional&lt;LeadResponseDto&gt; findLeadById(UUID leadId) {
+<span class="fc" id="L85">        return leadRepository.findById(leadId).map(leadMapper::toDto);</span>
+    }
+
+    @Override
+    @Transactional
+    public boolean updateStatus(UUID leadId, String newStatus) {
+<span class="fc" id="L91">        return leadRepository.findById(leadId).map(lead -&gt; {</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            String oldStatus = lead.getStatus() != null ? lead.getStatus().name() : null;</span>
+<span class="fc" id="L93">            lead.setStatus(LeadStatus.valueOf(newStatus));</span>
+<span class="fc" id="L94">            leadRepository.save(lead);</span>
+<span class="fc" id="L95">            auditApi.recordAudit(&quot;LEAD&quot;, lead.getId().toString(), &quot;STATUS_CHANGE&quot;, &quot;system&quot;, oldStatus, newStatus);</span>
+<span class="fc" id="L96">            return true;</span>
+<span class="fc" id="L97">        }).orElse(false);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

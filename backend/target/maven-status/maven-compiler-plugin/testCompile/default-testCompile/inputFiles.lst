@@ -1,0 +1,12 @@
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\architecture\ModuleBoundaryTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\audit\AuditLogIntegrationTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\common\GlobalExceptionHandlerTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\customer\CustomerConversionIntegrationTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\identity\AuthIntegrationTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\identity\JwtServiceTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\lead\LeadIntelligenceIntegrationTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\lead\LeadScoringServiceTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\NexusCrmApplicationTests.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\notification\NotificationIntegrationTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\opportunity\OpportunityPipelineIntegrationTest.java
+C:\Users\badri\OneDrive\Desktop\nexusCRM\src\test\java\com\crm\opportunity\OpportunityStageValidationTest.java

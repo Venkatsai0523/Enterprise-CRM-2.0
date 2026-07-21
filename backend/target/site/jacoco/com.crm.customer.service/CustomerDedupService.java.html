@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerDedupService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.customer.service</a> &gt; <span class="el_source">CustomerDedupService.java</span></div><h1>CustomerDedupService.java</h1><pre class="source lang-java linenums">package com.crm.customer.service;
+
+import com.crm.customer.api.dto.CustomerAccountStatus;
+import com.crm.customer.entity.CustomerAccount;
+import com.crm.customer.repository.CustomerAccountRepository;
+import com.crm.lead.api.dto.LeadResponseDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+<span class="fc" id="L16">@Slf4j</span>
+@SuppressWarnings(&quot;null&quot;)
+public class CustomerDedupService {
+
+    private final CustomerAccountRepository customerAccountRepository;
+
+    @Transactional
+    public CustomerAccount findOrCreateCustomerAccount(LeadResponseDto lead) {
+<span class="fc" id="L24">        String normalizedDomain = extractDomain(lead.getEmail());</span>
+
+<span class="fc" id="L26">        Optional&lt;CustomerAccount&gt; existingOpt = customerAccountRepository.findByDomainName(normalizedDomain);</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (existingOpt.isPresent()) {</span>
+<span class="fc" id="L28">            log.info(&quot;Dedup Match Found! Linking opportunity to existing Customer Account ID: '{}' (Domain: '{}')&quot;,</span>
+<span class="fc" id="L29">                    existingOpt.get().getId(), normalizedDomain);</span>
+<span class="fc" id="L30">            return existingOpt.get();</span>
+        }
+
+        // No match found -&gt; instantiate new CustomerAccount
+<span class="fc" id="L34">        CustomerAccount newAccount = CustomerAccount.builder()</span>
+<span class="fc" id="L35">                .accountName(lead.getCompanyName())</span>
+<span class="fc" id="L36">                .domainName(normalizedDomain)</span>
+<span class="fc" id="L37">                .primaryEmail(lead.getEmail())</span>
+<span class="fc" id="L38">                .phone(lead.getPhone())</span>
+<span class="fc" id="L39">                .status(CustomerAccountStatus.ACTIVE)</span>
+<span class="fc" id="L40">                .build();</span>
+
+<span class="fc" id="L42">        CustomerAccount savedAccount = customerAccountRepository.save(newAccount);</span>
+<span class="fc" id="L43">        log.info(&quot;No dedup match found for domain '{}'. Created new Customer Account ID: '{}'&quot;,</span>
+<span class="fc" id="L44">                normalizedDomain, savedAccount.getId());</span>
+
+<span class="fc" id="L46">        return savedAccount;</span>
+    }
+
+    public String extractDomain(String email) {
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">        if (email == null || !email.contains(&quot;@&quot;)) {</span>
+<span class="nc" id="L51">            return &quot;unknown.com&quot;;</span>
+        }
+<span class="fc" id="L53">        return email.substring(email.indexOf(&quot;@&quot;) + 1).trim().toLowerCase();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
