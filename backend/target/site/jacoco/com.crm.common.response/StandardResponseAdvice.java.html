@@ -9,52 +9,55 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import java.time.Instant;
 
 @RestControllerAdvice
-<span class="nc" id="L15">public class StandardResponseAdvice implements ResponseBodyAdvice&lt;Object&gt; {</span>
+<span class="nc" id="L17">public class StandardResponseAdvice implements ResponseBodyAdvice&lt;Object&gt; {</span>
 
     @Override
-    public boolean supports(MethodParameter returnType, Class&lt;? extends HttpMessageConverter&lt;?&gt;&gt; converterType) {
-<span class="nc" id="L19">        Class&lt;?&gt; parameterType = returnType.getParameterType();</span>
-<span class="nc bnc" id="L20" title="All 2 branches missed.">        return !StandardResponse.class.isAssignableFrom(parameterType)</span>
-<span class="nc bnc" id="L21" title="All 2 branches missed.">                &amp;&amp; !ErrorResponse.class.isAssignableFrom(parameterType);</span>
+    public boolean supports(@NonNull MethodParameter returnType, @NonNull Class&lt;? extends HttpMessageConverter&lt;?&gt;&gt; converterType) {
+<span class="nc" id="L21">        Class&lt;?&gt; parameterType = returnType.getParameterType();</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        return !StandardResponse.class.isAssignableFrom(parameterType)</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">                &amp;&amp; !ErrorResponse.class.isAssignableFrom(parameterType);</span>
     }
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-                                  Class&lt;? extends HttpMessageConverter&lt;?&gt;&gt; selectedConverterType,
-                                  ServerHttpRequest request, ServerHttpResponse response) {
+    @Nullable
+    public Object beforeBodyWrite(@Nullable Object body, @NonNull MethodParameter returnType, @NonNull MediaType selectedContentType,
+                                  @NonNull Class&lt;? extends HttpMessageConverter&lt;?&gt;&gt; selectedConverterType,
+                                  @NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response) {
 
-<span class="nc" id="L29">        String path = request.getURI().getPath();</span>
+<span class="nc" id="L32">        String path = request.getURI().getPath();</span>
 
         // Skip OpenAPI/Swagger UI resources and Actuator
-<span class="nc bnc" id="L32" title="All 6 branches missed.">        if (path.contains(&quot;/v3/api-docs&quot;) || path.contains(&quot;/swagger-ui&quot;) || path.contains(&quot;/actuator&quot;)) {</span>
-<span class="nc" id="L33">            return body;</span>
+<span class="nc bnc" id="L35" title="All 6 branches missed.">        if (path.contains(&quot;/v3/api-docs&quot;) || path.contains(&quot;/swagger-ui&quot;) || path.contains(&quot;/actuator&quot;)) {</span>
+<span class="nc" id="L36">            return body;</span>
         }
 
         // Skip if the response is an ErrorResponse
-<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (body instanceof ErrorResponse) {</span>
-<span class="nc" id="L38">            return body;</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (body instanceof ErrorResponse) {</span>
+<span class="nc" id="L41">            return body;</span>
         }
 
         // Skip if the response is already a StandardResponse
-<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (body instanceof StandardResponse) {</span>
-<span class="nc" id="L43">            return body;</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (body instanceof StandardResponse) {</span>
+<span class="nc" id="L46">            return body;</span>
         }
 
         // Avoid ClassCastException for String responses
-<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (body instanceof String) {</span>
-<span class="nc" id="L48">            return body;</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (body instanceof String) {</span>
+<span class="nc" id="L51">            return body;</span>
         }
 
-<span class="nc" id="L51">        return StandardResponse.builder()</span>
-<span class="nc" id="L52">                .success(true)</span>
-<span class="nc" id="L53">                .message(&quot;Operation completed successfully.&quot;)</span>
-<span class="nc" id="L54">                .data(body)</span>
-<span class="nc" id="L55">                .timestamp(Instant.now())</span>
-<span class="nc" id="L56">                .path(path)</span>
-<span class="nc" id="L57">                .build();</span>
+<span class="nc" id="L54">        return StandardResponse.builder()</span>
+<span class="nc" id="L55">                .success(true)</span>
+<span class="nc" id="L56">                .message(&quot;Operation completed successfully.&quot;)</span>
+<span class="nc" id="L57">                .data(body)</span>
+<span class="nc" id="L58">                .timestamp(Instant.now())</span>
+<span class="nc" id="L59">                .path(path)</span>
+<span class="nc" id="L60">                .build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
