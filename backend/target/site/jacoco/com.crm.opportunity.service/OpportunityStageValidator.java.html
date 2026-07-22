@@ -16,7 +16,7 @@ import java.util.Set;
 <span class="fc" id="L16">            OpportunityStage.NEGOTIATION, Set.of(OpportunityStage.WON, OpportunityStage.LOST),</span>
 <span class="fc" id="L17">            OpportunityStage.WON, Set.of(),  // Terminal state</span>
 <span class="fc" id="L18">            OpportunityStage.LOST, Set.of()   // Terminal state</span>
-<span class="fc" id="L19">    );</span>
+    );
 
     public void validateTransition(OpportunityStage currentStage, OpportunityStage targetStage, String lostReason) {
 <span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if (currentStage == targetStage) {</span>
@@ -26,8 +26,8 @@ import java.util.Set;
 <span class="fc" id="L26">        Set&lt;OpportunityStage&gt; allowed = VALID_TRANSITIONS.getOrDefault(currentStage, Set.of());</span>
 <span class="fc bfc" id="L27" title="All 2 branches covered.">        if (!allowed.contains(targetStage)) {</span>
 <span class="fc" id="L28">            throw new BadRequestException(String.format(</span>
-<span class="fc" id="L29">                    &quot;Invalid stage transition from '%s' to '%s'. Allowed transitions: %s&quot;,</span>
-<span class="fc" id="L30">                    currentStage, targetStage, allowed</span>
+                    &quot;Invalid stage transition from '%s' to '%s'. Allowed transitions: %s&quot;,
+                    currentStage, targetStage, allowed
             ));
         }
 

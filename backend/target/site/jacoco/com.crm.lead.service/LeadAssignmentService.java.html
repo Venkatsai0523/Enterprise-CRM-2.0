@@ -55,14 +55,15 @@ public class LeadAssignmentService {
 <span class="fc" id="L55">                .leadId(lead.getId())</span>
 <span class="fc" id="L56">                .assignedRepId(assignedRepId)</span>
 <span class="fc" id="L57">                .score(lead.getScore())</span>
-<span class="fc" id="L58">                .build());</span>
+<span class="fc" id="L58">                .organizationId(lead.getOrganizationId())</span>
+<span class="fc" id="L59">                .build());</span>
     }
 
     private UUID resolveRepId() {
         // Query identity module via published IdentityApi interface
-<span class="fc" id="L63">        return identityApi.findUserByEmail(&quot;rep@nexus.com&quot;)</span>
-<span class="fc" id="L64">                .map(UserResponseDto::getId)</span>
-<span class="fc" id="L65">                .orElse(FALLBACK_REP_ID);</span>
+<span class="fc" id="L64">        return identityApi.findUserByEmail(&quot;rep@nexus.com&quot;)</span>
+<span class="fc" id="L65">                .map(UserResponseDto::getId)</span>
+<span class="fc" id="L66">                .orElse(FALLBACK_REP_ID);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

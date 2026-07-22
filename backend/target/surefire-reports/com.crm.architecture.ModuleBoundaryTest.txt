@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.crm.architecture.ModuleBoundaryTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.77 s -- in com.crm.architecture.ModuleBoundaryTest
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 28.19 s -- in com.crm.architecture.ModuleBoundaryTest

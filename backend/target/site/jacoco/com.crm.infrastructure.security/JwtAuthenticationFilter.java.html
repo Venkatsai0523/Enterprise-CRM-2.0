@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtAuthenticationFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.infrastructure.security</a> &gt; <span class="el_source">JwtAuthenticationFilter.java</span></div><h1>JwtAuthenticationFilter.java</h1><pre class="source lang-java linenums">package com.crm.infrastructure.security;
 
-import com.crm.identity.service.CustomUserDetailsService;
 import com.crm.identity.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,7 +19,6 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -30,36 +26,60 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-<span class="fc" id="L33">        final String authHeader = request.getHeader(&quot;Authorization&quot;);</span>
+<span class="fc" id="L29">        final String authHeader = request.getHeader(&quot;Authorization&quot;);</span>
         final String jwt;
-        final String userEmail;
 
-<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        if (authHeader == null || !authHeader.startsWith(&quot;Bearer &quot;)) {</span>
-<span class="fc" id="L38">            filterChain.doFilter(request, response);</span>
-<span class="fc" id="L39">            return;</span>
+<span class="pc bpc" id="L32" title="1 of 4 branches missed.">        if (authHeader == null || !authHeader.startsWith(&quot;Bearer &quot;)) {</span>
+<span class="fc" id="L33">            filterChain.doFilter(request, response);</span>
+<span class="fc" id="L34">            return;</span>
         }
 
-<span class="fc" id="L42">        jwt = authHeader.substring(7);</span>
+<span class="fc" id="L37">        jwt = authHeader.substring(7);</span>
         try {
-<span class="fc" id="L44">            userEmail = jwtService.extractUsername(jwt);</span>
-<span class="pc bpc" id="L45" title="2 of 4 branches missed.">            if (userEmail != null &amp;&amp; SecurityContextHolder.getContext().getAuthentication() == null) {</span>
-<span class="fc" id="L46">                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);</span>
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                if (jwtService.isTokenValid(jwt, userDetails)) {</span>
-<span class="fc" id="L48">                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(</span>
-<span class="fc" id="L49">                            userDetails,</span>
-<span class="fc" id="L50">                            null,</span>
-<span class="fc" id="L51">                            userDetails.getAuthorities()</span>
-                    );
-<span class="fc" id="L53">                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
-<span class="fc" id="L54">                    SecurityContextHolder.getContext().setAuthentication(authToken);</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            if (!jwtService.isTokenExpired(jwt)) {</span>
+<span class="fc" id="L40">                String userEmail = jwtService.extractUsername(jwt);</span>
+<span class="pc bpc" id="L41" title="2 of 4 branches missed.">                if (userEmail != null &amp;&amp; SecurityContextHolder.getContext().getAuthentication() == null) {</span>
+<span class="fc" id="L42">                    String orgIdStr = jwtService.extractClaim(jwt, &quot;organizationId&quot;);</span>
+<span class="fc" id="L43">                    String userIdStr = jwtService.extractClaim(jwt, &quot;userId&quot;);</span>
+<span class="fc" id="L44">                    java.util.List&lt;String&gt; roles = jwtService.extractRoles(jwt);</span>
+
+<span class="pc bpc" id="L46" title="3 of 6 branches missed.">                    if (orgIdStr != null &amp;&amp; userIdStr != null &amp;&amp; roles != null) {</span>
+<span class="fc" id="L47">                        java.util.UUID organizationId = java.util.UUID.fromString(orgIdStr);</span>
+<span class="fc" id="L48">                        java.util.UUID userId = java.util.UUID.fromString(userIdStr);</span>
+
+<span class="fc" id="L50">                        java.util.Set&lt;org.springframework.security.core.authority.SimpleGrantedAuthority&gt; authorities = roles.stream()</span>
+<span class="fc" id="L51">                                .map(org.springframework.security.core.authority.SimpleGrantedAuthority::new)</span>
+<span class="fc" id="L52">                                .collect(java.util.stream.Collectors.toSet());</span>
+
+<span class="fc" id="L54">                        com.crm.identity.api.dto.CustomUserDetails userDetails = com.crm.identity.api.dto.CustomUserDetails.builder()</span>
+<span class="fc" id="L55">                                .userId(userId)</span>
+<span class="fc" id="L56">                                .email(userEmail)</span>
+<span class="fc" id="L57">                                .passwordHash(&quot;&quot;) // stateless</span>
+<span class="fc" id="L58">                                .enabled(true)</span>
+<span class="fc" id="L59">                                .organizationId(organizationId)</span>
+<span class="fc" id="L60">                                .authorities(authorities)</span>
+<span class="fc" id="L61">                                .build();</span>
+
+<span class="fc" id="L63">                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(</span>
+                                userDetails,
+                                null,
+<span class="fc" id="L66">                                userDetails.getAuthorities()</span>
+                        );
+<span class="fc" id="L68">                        authToken.setDetails(new org.springframework.security.web.authentication.WebAuthenticationDetailsSource().buildDetails(request));</span>
+<span class="fc" id="L69">                        SecurityContextHolder.getContext().setAuthentication(authToken);</span>
+
+                        // Set TenantContext for the thread
+<span class="fc" id="L72">                        com.crm.infrastructure.tenant.TenantContext.setTenantId(organizationId);</span>
+                    }
                 }
             }
-<span class="pc" id="L57">        } catch (Exception ex) {</span>
-            // Invalid token - clear context and proceed so SecurityConfig handles unauthorized response
-<span class="nc" id="L59">            SecurityContextHolder.clearContext();</span>
+<span class="fc" id="L76">            filterChain.doFilter(request, response);</span>
+<span class="nc" id="L77">        } catch (Exception ex) {</span>
+<span class="nc" id="L78">            SecurityContextHolder.clearContext();</span>
+<span class="nc" id="L79">            filterChain.doFilter(request, response);</span>
+        } finally {
+<span class="fc" id="L81">            com.crm.infrastructure.tenant.TenantContext.clear();</span>
         }
-
-<span class="fc" id="L62">        filterChain.doFilter(request, response);</span>
-<span class="fc" id="L63">    }</span>
+<span class="fc" id="L83">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

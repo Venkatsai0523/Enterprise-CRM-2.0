@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.crm.analytics.AnalyticsIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 30.96 s -- in com.crm.analytics.AnalyticsIntegrationTest

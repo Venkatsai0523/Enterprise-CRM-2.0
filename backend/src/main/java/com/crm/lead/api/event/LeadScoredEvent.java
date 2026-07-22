@@ -18,6 +18,7 @@ public class LeadScoredEvent {
     private String email;
     private String companyName;
     private int score;
+    private UUID organizationId;
     @Builder.Default
     private Instant timestamp = Instant.now();
 }

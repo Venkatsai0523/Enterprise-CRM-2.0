@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrganizationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.organization.controller</a> &gt; <span class="el_source">OrganizationController.java</span></div><h1>OrganizationController.java</h1><pre class="source lang-java linenums">package com.crm.organization.controller;
+
+import com.crm.organization.api.OrganizationApi;
+import com.crm.organization.api.dto.OrganizationCreateDto;
+import com.crm.organization.api.dto.OrganizationResponseDto;
+import com.crm.organization.api.dto.OrganizationUpdateDto;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping(&quot;/api/organizations&quot;)
+@RequiredArgsConstructor
+public class OrganizationController {
+
+    private final OrganizationApi organizationApi;
+
+    @PostMapping
+    @PreAuthorize(&quot;hasRole('ADMIN')&quot;)
+    public ResponseEntity&lt;OrganizationResponseDto&gt; createOrganization(
+            @Valid @RequestBody OrganizationCreateDto dto
+    ) {
+<span class="nc" id="L29">        OrganizationResponseDto created = organizationApi.createOrganization(dto);</span>
+<span class="nc" id="L30">        return ResponseEntity.status(HttpStatus.CREATED).body(created);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MANAGER')&quot;)
+    public ResponseEntity&lt;OrganizationResponseDto&gt; getOrganizationById(
+            @PathVariable UUID id
+    ) {
+<span class="nc" id="L38">        return organizationApi.findOrganizationById(id)</span>
+<span class="nc" id="L39">                .map(ResponseEntity::ok)</span>
+<span class="nc" id="L40">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    @GetMapping
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MANAGER')&quot;)
+    public ResponseEntity&lt;List&lt;OrganizationResponseDto&gt;&gt; getAllOrganizations() {
+<span class="nc" id="L46">        List&lt;OrganizationResponseDto&gt; orgs = organizationApi.getAllOrganizations();</span>
+<span class="nc" id="L47">        return ResponseEntity.ok(orgs);</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    @PreAuthorize(&quot;hasRole('ADMIN')&quot;)
+    public ResponseEntity&lt;OrganizationResponseDto&gt; updateOrganization(
+            @PathVariable UUID id,
+            @Valid @RequestBody OrganizationUpdateDto dto
+    ) {
+<span class="nc" id="L56">        OrganizationResponseDto updated = organizationApi.updateOrganization(id, dto);</span>
+<span class="nc" id="L57">        return ResponseEntity.ok(updated);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

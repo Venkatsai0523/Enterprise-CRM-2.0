@@ -32,35 +32,40 @@ public class DealWonConsumer {
     )
     @Transactional
     public void consumeDealWonEvent(DealWonEvent event) {
-        log.info("Received DealWonEvent for opportunity ID: {}, lead ID: {}", event.getOpportunityId(), event.getLeadId());
+        com.crm.infrastructure.tenant.TenantContext.setTenantId(event.getOrganizationId());
+        try {
+            log.info("Received DealWonEvent for opportunity ID: {}, lead ID: {}", event.getOpportunityId(), event.getLeadId());
 
-        if (linkRepository.existsByOpportunityId(event.getOpportunityId())) {
-            log.info("Opportunity ID {} is already linked to a Customer Account, skipping (idempotent guard)", event.getOpportunityId());
-            return;
+            if (linkRepository.existsByOpportunityId(event.getOpportunityId())) {
+                log.info("Opportunity ID {} is already linked to a Customer Account, skipping (idempotent guard)", event.getOpportunityId());
+                return;
+            }
+
+            Optional<LeadResponseDto> leadOpt = leadApi.findLeadById(event.getLeadId());
+            if (leadOpt.isEmpty()) {
+                log.warn("Lead ID {} not found for deal conversion", event.getLeadId());
+                return;
+            }
+
+            LeadResponseDto lead = leadOpt.get();
+
+            // 1. Perform deduplication & find/create CustomerAccount
+            CustomerAccount account = customerDedupService.findOrCreateCustomerAccount(lead);
+
+            // 2. Link Opportunity to CustomerAccount
+            CustomerOpportunityLink link = CustomerOpportunityLink.builder()
+                    .customerAccountId(account.getId())
+                    .opportunityId(event.getOpportunityId())
+                    .build();
+            linkRepository.save(link);
+
+            // 3. Mark Lead as CONVERTED in Lead domain
+            leadApi.updateStatus(lead.getId(), "CONVERTED");
+
+            log.info("Successfully converted deal {} into Customer Account ID '{}' (Lead {} updated to CONVERTED)",
+                    event.getOpportunityId(), account.getId(), lead.getId());
+        } finally {
+            com.crm.infrastructure.tenant.TenantContext.clear();
         }
-
-        Optional<LeadResponseDto> leadOpt = leadApi.findLeadById(event.getLeadId());
-        if (leadOpt.isEmpty()) {
-            log.warn("Lead ID {} not found for deal conversion", event.getLeadId());
-            return;
-        }
-
-        LeadResponseDto lead = leadOpt.get();
-
-        // 1. Perform deduplication & find/create CustomerAccount
-        CustomerAccount account = customerDedupService.findOrCreateCustomerAccount(lead);
-
-        // 2. Link Opportunity to CustomerAccount
-        CustomerOpportunityLink link = CustomerOpportunityLink.builder()
-                .customerAccountId(account.getId())
-                .opportunityId(event.getOpportunityId())
-                .build();
-        linkRepository.save(link);
-
-        // 3. Mark Lead as CONVERTED in Lead domain
-        leadApi.updateStatus(lead.getId(), "CONVERTED");
-
-        log.info("Successfully converted deal {} into Customer Account ID '{}' (Lead {} updated to CONVERTED)",
-                event.getOpportunityId(), account.getId(), lead.getId());
     }
 }

@@ -56,6 +56,7 @@ public class LeadService implements LeadApi {
                 .email(savedLead.getEmail())
                 .companyName(savedLead.getCompanyName())
                 .score(score)
+                .organizationId(savedLead.getOrganizationId())
                 .build();
 
         eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);
@@ -95,5 +96,37 @@ public class LeadService implements LeadApi {
             auditApi.recordAudit("LEAD", lead.getId().toString(), "STATUS_CHANGE", "system", oldStatus, newStatus);
             return true;
         }).orElse(false);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countLeads() {
+        return leadRepository.count();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countLeadsByStatus(String status) {
+        return leadRepository.countByStatus(LeadStatus.valueOf(status.toUpperCase()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public double getAverageLeadScore() {
+        Double avg = leadRepository.getAverageScore();
+        return avg != null ? avg : 0.0;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.Map<String, Long> countLeadsBySource() {
+        java.util.List<Object[]> results = leadRepository.countByLeadSourceGrouped();
+        java.util.Map<String, Long> map = new java.util.HashMap<>();
+        for (Object[] row : results) {
+            if (row[0] != null) {
+                map.put(row[0].toString(), (Long) row[1]);
+            }
+        }
+        return map;
     }
 }

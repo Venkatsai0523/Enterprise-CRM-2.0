@@ -24,4 +24,12 @@ public interface LeadRepository extends JpaRepository<Lead, UUID> {
             @Param("maxScore") Integer maxScore,
             Pageable pageable
     );
+
+    long countByStatus(LeadStatus status);
+
+    @Query("SELECT COALESCE(AVG(l.score), 0.0) FROM Lead l")
+    Double getAverageScore();
+
+    @Query("SELECT l.leadSource, COUNT(l) FROM Lead l GROUP BY l.leadSource")
+    java.util.List<Object[]> countByLeadSourceGrouped();
 }

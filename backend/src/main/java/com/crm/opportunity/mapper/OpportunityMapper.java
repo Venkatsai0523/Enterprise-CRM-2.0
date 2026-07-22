@@ -15,6 +15,7 @@ public interface OpportunityMapper {
     @Mapping(target = "closedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "organizationId", ignore = true)
     Opportunity toEntity(OpportunityCreateDto dto);
 
     OpportunityResponseDto toDto(Opportunity opportunity);

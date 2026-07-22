@@ -15,6 +15,7 @@ public interface LeadMapper {
     @Mapping(target = "assignedRepId", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "organizationId", ignore = true)
     Lead toEntity(LeadCreateDto dto);
 
     LeadResponseDto toDto(Lead lead);

@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailBypassingTenant(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
@@ -33,14 +33,13 @@ public class CustomUserDetailsService implements UserDetailsService {
             );
         });
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPasswordHash(),
-                user.isEnabled(),
-                true,
-                true,
-                true,
-                authorities
-        );
+        return com.crm.identity.api.dto.CustomUserDetails.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .passwordHash(user.getPasswordHash())
+                .enabled(user.isEnabled())
+                .organizationId(user.getOrganizationId())
+                .authorities(authorities)
+                .build();
     }
 }

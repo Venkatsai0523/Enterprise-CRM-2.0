@@ -12,6 +12,7 @@ public class KafkaTopicConfig {
     public static final String TOPIC_LEAD_ASSIGNED = "lead.assigned";
     public static final String TOPIC_DEAL_WON = "opportunity.deal-won";
     public static final String TOPIC_DEAL_LOST = "opportunity.deal-lost";
+    public static final String TOPIC_TASK_ASSIGNED = "task.assigned";
 
     @Bean
     public NewTopic leadScoredTopic() {
@@ -40,6 +41,14 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic dealLostTopic() {
         return TopicBuilder.name(TOPIC_DEAL_LOST)
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic taskAssignedTopic() {
+        return TopicBuilder.name(TOPIC_TASK_ASSIGNED)
                 .partitions(1)
                 .replicas(1)
                 .build();

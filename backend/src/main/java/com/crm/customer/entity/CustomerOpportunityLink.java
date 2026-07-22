@@ -31,4 +31,8 @@ public class CustomerOpportunityLink {
     @CreationTimestamp
     @Column(name = "linked_at", updatable = false)
     private Instant linkedAt;
+
+    @org.hibernate.annotations.TenantId
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 }

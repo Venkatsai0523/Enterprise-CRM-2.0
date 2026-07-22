@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-<span class="fc" id="L25">        User user = userRepository.findByEmail(email)</span>
+<span class="fc" id="L25">        User user = userRepository.findByEmailBypassingTenant(email)</span>
 <span class="pc" id="L26">                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found with email: &quot; + email));</span>
 
 <span class="fc" id="L28">        Set&lt;SimpleGrantedAuthority&gt; authorities = new HashSet&lt;&gt;();</span>
@@ -33,15 +33,14 @@ public class CustomUserDetailsService implements UserDetailsService {
             );
 <span class="fc" id="L34">        });</span>
 
-<span class="fc" id="L36">        return new org.springframework.security.core.userdetails.User(</span>
-<span class="fc" id="L37">                user.getEmail(),</span>
-<span class="fc" id="L38">                user.getPasswordHash(),</span>
-<span class="fc" id="L39">                user.isEnabled(),</span>
-<span class="fc" id="L40">                true,</span>
-<span class="fc" id="L41">                true,</span>
-<span class="fc" id="L42">                true,</span>
-<span class="fc" id="L43">                authorities</span>
-        );
+<span class="fc" id="L36">        return com.crm.identity.api.dto.CustomUserDetails.builder()</span>
+<span class="fc" id="L37">                .userId(user.getId())</span>
+<span class="fc" id="L38">                .email(user.getEmail())</span>
+<span class="fc" id="L39">                .passwordHash(user.getPasswordHash())</span>
+<span class="fc" id="L40">                .enabled(user.isEnabled())</span>
+<span class="fc" id="L41">                .organizationId(user.getOrganizationId())</span>
+<span class="fc" id="L42">                .authorities(authorities)</span>
+<span class="fc" id="L43">                .build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

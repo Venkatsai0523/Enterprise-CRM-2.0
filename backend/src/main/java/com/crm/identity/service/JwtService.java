@@ -39,6 +39,11 @@ public class JwtService {
                 .toList();
         extraClaims.put("roles", roles);
 
+        if (userDetails instanceof com.crm.identity.api.dto.CustomUserDetails customUserDetails) {
+            extraClaims.put("organizationId", customUserDetails.getOrganizationId().toString());
+            extraClaims.put("userId", customUserDetails.getUserId().toString());
+        }
+
         return buildToken(extraClaims, userDetails.getUsername(), jwtExpirationMs);
     }
 
@@ -70,7 +75,16 @@ public class JwtService {
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
+    public String extractClaim(String token, String claimKey) {
+        return extractClaim(token, claims -> claims.get(claimKey, String.class));
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token) {
+        return extractClaim(token, claims -> claims.get("roles", List.class));
+    }
+
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 

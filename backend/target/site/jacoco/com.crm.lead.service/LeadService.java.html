@@ -32,7 +32,7 @@ public class LeadService implements LeadApi {
     private final KafkaEventPublisher eventPublisher;
     private final AuditApi auditApi;
 
-<span class="fc" id="L35">    public static final String TOPIC_LEAD_SCORED = &quot;lead.scored&quot;;</span>
+    public static final String TOPIC_LEAD_SCORED = &quot;lead.scored&quot;;
 
     @Transactional
     public LeadResponseDto createAndScoreLead(LeadCreateDto dto) {
@@ -56,25 +56,26 @@ public class LeadService implements LeadApi {
 <span class="fc" id="L56">                .email(savedLead.getEmail())</span>
 <span class="fc" id="L57">                .companyName(savedLead.getCompanyName())</span>
 <span class="fc" id="L58">                .score(score)</span>
-<span class="fc" id="L59">                .build();</span>
+<span class="fc" id="L59">                .organizationId(savedLead.getOrganizationId())</span>
+<span class="fc" id="L60">                .build();</span>
 
-<span class="fc" id="L61">        eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);</span>
+<span class="fc" id="L62">        eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);</span>
 
-<span class="fc" id="L63">        return leadMapper.toDto(savedLead);</span>
+<span class="fc" id="L64">        return leadMapper.toDto(savedLead);</span>
     }
 
     @Transactional(readOnly = true)
     public LeadResponseDto getLeadById(UUID id) {
-<span class="fc" id="L68">        Lead lead = leadRepository.findById(id)</span>
-<span class="pc" id="L69">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Lead not found with ID: &quot; + id));</span>
-<span class="fc" id="L70">        return leadMapper.toDto(lead);</span>
+<span class="fc" id="L69">        Lead lead = leadRepository.findById(id)</span>
+<span class="fc" id="L70">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Lead not found with ID: &quot; + id));</span>
+<span class="fc" id="L71">        return leadMapper.toDto(lead);</span>
     }
 
     @Transactional(readOnly = true)
     public Page&lt;LeadResponseDto&gt; getLeadsWithFilters(LeadStatus status, Integer minScore, Integer maxScore, int page, int size) {
-<span class="fc" id="L75">        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));</span>
-<span class="fc" id="L76">        return leadRepository.findWithFilters(status, minScore, maxScore, pageRequest)</span>
-<span class="fc" id="L77">                .map(leadMapper::toDto);</span>
+<span class="fc" id="L76">        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));</span>
+<span class="fc" id="L77">        return leadRepository.findWithFilters(status, minScore, maxScore, pageRequest)</span>
+<span class="fc" id="L78">                .map(leadMapper::toDto);</span>
     }
 
     // --- LeadApi Implementation ---
@@ -82,19 +83,51 @@ public class LeadService implements LeadApi {
     @Override
     @Transactional(readOnly = true)
     public Optional&lt;LeadResponseDto&gt; findLeadById(UUID leadId) {
-<span class="fc" id="L85">        return leadRepository.findById(leadId).map(leadMapper::toDto);</span>
+<span class="fc" id="L86">        return leadRepository.findById(leadId).map(leadMapper::toDto);</span>
     }
 
     @Override
     @Transactional
     public boolean updateStatus(UUID leadId, String newStatus) {
-<span class="fc" id="L91">        return leadRepository.findById(leadId).map(lead -&gt; {</span>
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            String oldStatus = lead.getStatus() != null ? lead.getStatus().name() : null;</span>
-<span class="fc" id="L93">            lead.setStatus(LeadStatus.valueOf(newStatus));</span>
-<span class="fc" id="L94">            leadRepository.save(lead);</span>
-<span class="fc" id="L95">            auditApi.recordAudit(&quot;LEAD&quot;, lead.getId().toString(), &quot;STATUS_CHANGE&quot;, &quot;system&quot;, oldStatus, newStatus);</span>
-<span class="fc" id="L96">            return true;</span>
-<span class="fc" id="L97">        }).orElse(false);</span>
+<span class="fc" id="L92">        return leadRepository.findById(leadId).map(lead -&gt; {</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">            String oldStatus = lead.getStatus() != null ? lead.getStatus().name() : null;</span>
+<span class="fc" id="L94">            lead.setStatus(LeadStatus.valueOf(newStatus));</span>
+<span class="fc" id="L95">            leadRepository.save(lead);</span>
+<span class="fc" id="L96">            auditApi.recordAudit(&quot;LEAD&quot;, lead.getId().toString(), &quot;STATUS_CHANGE&quot;, &quot;system&quot;, oldStatus, newStatus);</span>
+<span class="fc" id="L97">            return true;</span>
+<span class="fc" id="L98">        }).orElse(false);</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countLeads() {
+<span class="fc" id="L104">        return leadRepository.count();</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countLeadsByStatus(String status) {
+<span class="fc" id="L110">        return leadRepository.countByStatus(LeadStatus.valueOf(status.toUpperCase()));</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public double getAverageLeadScore() {
+<span class="fc" id="L116">        Double avg = leadRepository.getAverageScore();</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        return avg != null ? avg : 0.0;</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.Map&lt;String, Long&gt; countLeadsBySource() {
+<span class="fc" id="L123">        java.util.List&lt;Object[]&gt; results = leadRepository.countByLeadSourceGrouped();</span>
+<span class="fc" id="L124">        java.util.Map&lt;String, Long&gt; map = new java.util.HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        for (Object[] row : results) {</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">            if (row[0] != null) {</span>
+<span class="fc" id="L127">                map.put(row[0].toString(), (Long) row[1]);</span>
+            }
+<span class="fc" id="L129">        }</span>
+<span class="fc" id="L130">        return map;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

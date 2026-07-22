@@ -13,4 +13,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    @org.springframework.data.jpa.repository.Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
+    Optional<User> findByEmailBypassingTenant(@org.springframework.data.repository.query.Param("email") String email);
+
+    @org.springframework.data.jpa.repository.Query(value = "SELECT COUNT(*) > 0 FROM users WHERE email = :email", nativeQuery = true)
+    boolean existsByEmailBypassingTenant(@org.springframework.data.repository.query.Param("email") String email);
 }

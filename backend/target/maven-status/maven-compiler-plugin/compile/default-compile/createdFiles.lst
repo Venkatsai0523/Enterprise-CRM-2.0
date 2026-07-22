@@ -1,13 +1,13 @@
 com\crm\identity\package-info.class
 com\crm\infrastructure\package-info.class
 com\crm\customer\package-info.class
-com\crm\lead\package-info.class
 com\crm\common\package-info.class
-com\crm\opportunity\package-info.class
 com\crm\task\package-info.class
 com\crm\workflow\package-info.class
-com\crm\audit\package-info.class
 com\crm\NexusCrmApplication.class
-com\crm\organization\package-info.class
 com\crm\notification\package-info.class
+com\crm\lead\package-info.class
+com\crm\opportunity\package-info.class
+com\crm\audit\package-info.class
+com\crm\organization\package-info.class
 com\crm\analytics\package-info.class

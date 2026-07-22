@@ -1,93 +1,134 @@
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\analytics\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\audit\api\AuditApi.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\audit\api\dto\AuditLogResponseDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\audit\controller\AuditLogController.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\audit\entity\AuditLog.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\audit\mapper\AuditLogMapper.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\audit\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\audit\repository\AuditLogRepository.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\audit\service\AuditService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\common\exception\BadRequestException.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\common\exception\ErrorResponse.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\common\exception\GlobalExceptionHandler.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\common\exception\ResourceNotFoundException.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\common\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\api\CustomerApi.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\api\dto\Customer360ResponseDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\api\dto\CustomerAccountResponseDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\api\dto\CustomerAccountStatus.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\consumer\DealWonConsumer.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\controller\CustomerController.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\entity\CustomerAccount.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\entity\CustomerOpportunityLink.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\mapper\CustomerMapper.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\repository\CustomerAccountRepository.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\repository\CustomerOpportunityLinkRepository.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\service\CustomerDedupService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\customer\service\CustomerService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\api\dto\JwtResponseDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\api\dto\LoginRequestDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\api\dto\TokenRefreshRequestDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\api\dto\UserRegistrationDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\api\dto\UserResponseDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\api\IdentityApi.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\controller\AuthController.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\controller\TestProtectedController.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\entity\Permission.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\entity\Role.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\entity\User.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\mapper\UserMapper.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\repository\RoleRepository.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\repository\UserRepository.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\service\AuthService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\service\CustomUserDetailsService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\identity\service\JwtService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\infrastructure\kafka\KafkaEventPublisher.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\infrastructure\kafka\KafkaTopicConfig.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\infrastructure\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\infrastructure\security\JwtAuthenticationFilter.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\infrastructure\security\SecurityConfig.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\api\dto\LeadCreateDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\api\dto\LeadResponseDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\api\dto\LeadStatus.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\api\event\LeadAssignedEvent.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\api\event\LeadScoredEvent.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\api\LeadApi.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\consumer\LeadScoredEventConsumer.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\controller\LeadController.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\entity\Lead.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\mapper\LeadMapper.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\repository\LeadRepository.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\service\LeadAssignmentService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\service\LeadScoringService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\lead\service\LeadService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\NexusCrmApplication.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\notification\api\dto\NotificationResponseDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\notification\consumer\NotificationConsumer.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\notification\controller\NotificationController.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\notification\entity\Notification.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\notification\mapper\NotificationMapper.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\notification\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\notification\repository\NotificationRepository.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\notification\service\NotificationService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\api\dto\LostAnalysisDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\api\dto\OpportunityCreateDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\api\dto\OpportunityResponseDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\api\dto\OpportunityStage.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\api\dto\OpportunityStageUpdateDto.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\api\event\DealLostEvent.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\api\event\DealWonEvent.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\api\OpportunityApi.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\controller\OpportunityController.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\entity\Opportunity.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\mapper\OpportunityMapper.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\repository\OpportunityRepository.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\service\OpportunityService.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\opportunity\service\OpportunityStageValidator.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\organization\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\task\package-info.java
-C:\Users\badri\OneDrive\Desktop\nexusCRM\src\main\java\com\crm\workflow\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\analytics\api\dto\DashboardResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\analytics\controller\AnalyticsController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\analytics\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\analytics\service\AnalyticsService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\audit\api\AuditApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\audit\api\dto\AuditLogResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\audit\controller\AuditLogController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\audit\entity\AuditLog.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\audit\mapper\AuditLogMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\audit\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\audit\repository\AuditLogRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\audit\service\AuditService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\common\exception\BadRequestException.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\common\exception\ErrorResponse.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\common\exception\GlobalExceptionHandler.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\common\exception\ResourceNotFoundException.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\common\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\api\CustomerApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\api\dto\Customer360ResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\api\dto\CustomerAccountResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\api\dto\CustomerAccountStatus.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\consumer\DealWonConsumer.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\controller\CustomerController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\entity\CustomerAccount.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\entity\CustomerOpportunityLink.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\mapper\CustomerMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\repository\CustomerAccountRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\repository\CustomerOpportunityLinkRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\service\CustomerDedupService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\customer\service\CustomerService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\CustomUserDetails.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\JwtResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\LoginRequestDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\TokenRefreshRequestDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\UserRegistrationDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\UserResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\IdentityApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\controller\AuthController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\controller\TestProtectedController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\entity\Permission.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\entity\Role.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\entity\User.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\mapper\UserMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\repository\RoleRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\repository\UserRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\service\AuthService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\service\CustomUserDetailsService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\service\JwtService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\config\FlywayConfig.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\kafka\KafkaEventPublisher.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\kafka\KafkaTopicConfig.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\security\JwtAuthenticationFilter.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\security\SecurityConfig.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\tenant\TenantContext.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\tenant\TenantContextResolver.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\dto\LeadCreateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\dto\LeadResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\dto\LeadStatus.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\event\LeadAssignedEvent.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\event\LeadScoredEvent.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\LeadApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\consumer\LeadScoredEventConsumer.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\controller\LeadController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\entity\Lead.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\mapper\LeadMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\repository\LeadRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\service\LeadAssignmentService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\service\LeadScoringService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\service\LeadService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\NexusCrmApplication.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\api\dto\NotificationResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\api\NotificationApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\consumer\NotificationConsumer.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\controller\NotificationController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\entity\Notification.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\mapper\NotificationMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\repository\NotificationRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\notification\service\NotificationService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\LostAnalysisDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\OpportunityCreateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\OpportunityResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\OpportunityStage.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\OpportunityStageUpdateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\event\DealLostEvent.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\event\DealWonEvent.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\OpportunityApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\controller\OpportunityController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\entity\Opportunity.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\mapper\OpportunityMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\repository\OpportunityRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\service\OpportunityService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\service\OpportunityStageValidator.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\api\dto\OrganizationCreateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\api\dto\OrganizationResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\api\dto\OrganizationUpdateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\api\OrganizationApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\controller\OrganizationController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\entity\Organization.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\mapper\OrganizationMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\repository\OrganizationRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\organization\service\OrganizationService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\api\dto\TaskCreateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\api\dto\TaskPriority.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\api\dto\TaskResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\api\dto\TaskStatus.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\api\dto\TaskType.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\api\dto\TaskUpdateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\api\event\TaskAssignedEvent.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\api\TaskApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\controller\TaskController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\entity\Task.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\mapper\TaskMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\repository\TaskRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\task\service\TaskService.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\api\dto\WorkflowRuleCreateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\api\dto\WorkflowRuleResponseDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\api\dto\WorkflowRuleUpdateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\api\WorkflowApi.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\consumer\WorkflowEventConsumer.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\controller\WorkflowRuleController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\engine\WorkflowEngine.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\entity\WorkflowRule.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\mapper\WorkflowRuleMapper.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\package-info.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\repository\WorkflowRuleRepository.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\workflow\service\WorkflowService.java

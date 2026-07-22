@@ -55,6 +55,7 @@ public class LeadAssignmentService {
                 .leadId(lead.getId())
                 .assignedRepId(assignedRepId)
                 .score(lead.getScore())
+                .organizationId(lead.getOrganizationId())
                 .build());
     }
 

@@ -41,7 +41,7 @@ public class SecurityConfig {
 <span class="fc" id="L41">                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
 <span class="fc" id="L42">                    response.setContentType(&quot;application/json&quot;);</span>
 <span class="fc" id="L43">                    response.getWriter().write(String.format(</span>
-<span class="fc" id="L44">                        &quot;{\&quot;timestamp\&quot;:\&quot;%s\&quot;,\&quot;status\&quot;:401,\&quot;error\&quot;:\&quot;Unauthorized\&quot;,\&quot;message\&quot;:\&quot;Full authentication is required to access this resource\&quot;,\&quot;path\&quot;:\&quot;%s\&quot;}&quot;,</span>
+                        &quot;{\&quot;timestamp\&quot;:\&quot;%s\&quot;,\&quot;status\&quot;:401,\&quot;error\&quot;:\&quot;Unauthorized\&quot;,\&quot;message\&quot;:\&quot;Full authentication is required to access this resource\&quot;,\&quot;path\&quot;:\&quot;%s\&quot;}&quot;,
 <span class="fc" id="L45">                        java.time.Instant.now(),</span>
 <span class="fc" id="L46">                        request.getRequestURI()</span>
                     ));
@@ -49,11 +49,11 @@ public class SecurityConfig {
             )
 <span class="fc" id="L50">            .authorizeHttpRequests(auth -&gt; auth</span>
 <span class="fc" id="L51">                .requestMatchers(</span>
-<span class="fc" id="L52">                    &quot;/actuator/**&quot;,</span>
-<span class="fc" id="L53">                    &quot;/swagger-ui.html&quot;,</span>
-<span class="fc" id="L54">                    &quot;/swagger-ui/**&quot;,</span>
-<span class="fc" id="L55">                    &quot;/v3/api-docs/**&quot;,</span>
-<span class="fc" id="L56">                    &quot;/api/auth/**&quot;</span>
+                    &quot;/actuator/**&quot;,
+                    &quot;/swagger-ui.html&quot;,
+                    &quot;/swagger-ui/**&quot;,
+                    &quot;/v3/api-docs/**&quot;,
+                    &quot;/api/auth/**&quot;
 <span class="fc" id="L57">                ).permitAll()</span>
 <span class="fc" id="L58">                .anyRequest().authenticated()</span>
             );

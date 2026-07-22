@@ -20,6 +20,7 @@ public class DealLostEvent {
     private String title;
     private BigDecimal amount;
     private String lostReason;
+    private UUID organizationId;
     @Builder.Default
     private Instant timestamp = Instant.now();
 }

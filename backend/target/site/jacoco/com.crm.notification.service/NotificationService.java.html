@@ -14,31 +14,47 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import com.crm.notification.api.NotificationApi;
+
 @Service
 @RequiredArgsConstructor
-<span class="fc" id="L19">@Slf4j</span>
+<span class="fc" id="L21">@Slf4j</span>
 @SuppressWarnings(&quot;null&quot;)
-public class NotificationService {
+public class NotificationService implements NotificationApi {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
     @Transactional(readOnly = true)
     public Page&lt;NotificationResponseDto&gt; getNotificationsForRecipient(UUID recipientId, int page, int size) {
-<span class="fc" id="L28">        PageRequest pageRequest = PageRequest.of(page, size);</span>
-<span class="fc" id="L29">        return notificationRepository.findByRecipientIdOrderByCreatedAtDesc(recipientId, pageRequest)</span>
-<span class="fc" id="L30">                .map(notificationMapper::toDto);</span>
+<span class="fc" id="L30">        PageRequest pageRequest = PageRequest.of(page, size);</span>
+<span class="fc" id="L31">        return notificationRepository.findByRecipientIdOrderByCreatedAtDesc(recipientId, pageRequest)</span>
+<span class="fc" id="L32">                .map(notificationMapper::toDto);</span>
     }
 
     @Transactional
     public NotificationResponseDto markAsRead(UUID notificationId) {
-<span class="fc" id="L35">        Notification notification = notificationRepository.findById(notificationId)</span>
-<span class="pc" id="L36">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Notification not found with ID: &quot; + notificationId));</span>
+<span class="fc" id="L37">        Notification notification = notificationRepository.findById(notificationId)</span>
+<span class="pc" id="L38">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Notification not found with ID: &quot; + notificationId));</span>
 
-<span class="fc" id="L38">        notification.setRead(true);</span>
-<span class="fc" id="L39">        Notification saved = notificationRepository.save(notification);</span>
-<span class="fc" id="L40">        log.info(&quot;Notification '{}' marked as read.&quot;, notificationId);</span>
-<span class="fc" id="L41">        return notificationMapper.toDto(saved);</span>
+<span class="fc" id="L40">        notification.setRead(true);</span>
+<span class="fc" id="L41">        Notification saved = notificationRepository.save(notification);</span>
+<span class="fc" id="L42">        log.info(&quot;Notification '{}' marked as read.&quot;, notificationId);</span>
+<span class="fc" id="L43">        return notificationMapper.toDto(saved);</span>
+    }
+
+    @Override
+    @Transactional
+    public NotificationResponseDto sendNotification(UUID recipientId, String type, String message) {
+<span class="fc" id="L49">        Notification notification = Notification.builder()</span>
+<span class="fc" id="L50">                .recipientId(recipientId)</span>
+<span class="fc" id="L51">                .type(type)</span>
+<span class="fc" id="L52">                .message(message)</span>
+<span class="fc" id="L53">                .read(false)</span>
+<span class="fc" id="L54">                .build();</span>
+<span class="fc" id="L55">        Notification saved = notificationRepository.save(notification);</span>
+<span class="fc" id="L56">        log.info(&quot;Notification sent to recipient: {} with type: {}&quot;, recipientId, type);</span>
+<span class="fc" id="L57">        return notificationMapper.toDto(saved);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

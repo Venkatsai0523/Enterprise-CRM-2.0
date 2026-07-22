@@ -40,7 +40,7 @@ public class AuthService implements IdentityApi {
 
     @Transactional
     public UserResponseDto register(UserRegistrationDto dto) {
-        if (userRepository.existsByEmail(dto.getEmail())) {
+        if (userRepository.existsByEmailBypassingTenant(dto.getEmail())) {
             throw new BadRequestException("Email is already registered: " + dto.getEmail());
         }
 
@@ -55,6 +55,10 @@ public class AuthService implements IdentityApi {
         Role role = roleRepository.findByName(targetRoleName)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + dto.getRoleName()));
 
+        UUID orgId = dto.getOrganizationId() != null 
+                ? dto.getOrganizationId() 
+                : com.crm.infrastructure.tenant.TenantContextResolver.DEFAULT_ORG_ID;
+
         User user = User.builder()
                 .email(dto.getEmail())
                 .passwordHash(passwordEncoder.encode(dto.getPassword()))
@@ -62,9 +66,10 @@ public class AuthService implements IdentityApi {
                 .lastName(dto.getLastName())
                 .enabled(true)
                 .roles(Set.of(role))
+                .organizationId(orgId)
                 .build();
 
-        User savedUser = userRepository.save(user);
+        User savedUser = com.crm.infrastructure.tenant.TenantContext.computeInTenantContext(orgId, () -> userRepository.saveAndFlush(user));
         return userMapper.toDto(savedUser);
     }
 
@@ -73,7 +78,7 @@ public class AuthService implements IdentityApi {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
 
-        User user = userRepository.findByEmail(dto.getEmail())
+        User user = userRepository.findByEmailBypassingTenant(dto.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + dto.getEmail()));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
@@ -102,7 +107,7 @@ public class AuthService implements IdentityApi {
         if (username != null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtService.isTokenValid(refreshToken, userDetails)) {
-                User user = userRepository.findByEmail(username)
+                User user = userRepository.findByEmailBypassingTenant(username)
                         .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
 
                 String newAccessToken = jwtService.generateToken(userDetails);
@@ -136,7 +141,7 @@ public class AuthService implements IdentityApi {
     @Override
     @Transactional(readOnly = true)
     public Optional<UserResponseDto> findUserByEmail(String email) {
-        return userRepository.findByEmail(email).map(userMapper::toDto);
+        return userRepository.findByEmailBypassingTenant(email).map(userMapper::toDto);
     }
 
     @Override

@@ -23,10 +23,10 @@ public class JwtService {
     private final long jwtExpirationMs;
     private final long refreshExpirationMs;
 
-<span class="fc" id="L26">    public JwtService(</span>
+    public JwtService(
             @Value(&quot;${crm.jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}&quot;) String secretKey,
             @Value(&quot;${crm.jwt.expiration-ms:86400000}&quot;) long jwtExpirationMs,
-            @Value(&quot;${crm.jwt.refresh-expiration-ms:604800000}&quot;) long refreshExpirationMs) {
+<span class="fc" id="L29">            @Value(&quot;${crm.jwt.refresh-expiration-ms:604800000}&quot;) long refreshExpirationMs) {</span>
 <span class="fc" id="L30">        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));</span>
 <span class="fc" id="L31">        this.jwtExpirationMs = jwtExpirationMs;</span>
 <span class="fc" id="L32">        this.refreshExpirationMs = refreshExpirationMs;</span>
@@ -39,51 +39,65 @@ public class JwtService {
 <span class="fc" id="L39">                .toList();</span>
 <span class="fc" id="L40">        extraClaims.put(&quot;roles&quot;, roles);</span>
 
-<span class="fc" id="L42">        return buildToken(extraClaims, userDetails.getUsername(), jwtExpirationMs);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (userDetails instanceof com.crm.identity.api.dto.CustomUserDetails customUserDetails) {</span>
+<span class="fc" id="L43">            extraClaims.put(&quot;organizationId&quot;, customUserDetails.getOrganizationId().toString());</span>
+<span class="fc" id="L44">            extraClaims.put(&quot;userId&quot;, customUserDetails.getUserId().toString());</span>
+        }
+
+<span class="fc" id="L47">        return buildToken(extraClaims, userDetails.getUsername(), jwtExpirationMs);</span>
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-<span class="fc" id="L46">        return buildToken(new HashMap&lt;&gt;(), userDetails.getUsername(), refreshExpirationMs);</span>
+<span class="fc" id="L51">        return buildToken(new HashMap&lt;&gt;(), userDetails.getUsername(), refreshExpirationMs);</span>
     }
 
     private String buildToken(Map&lt;String, Object&gt; extraClaims, String subject, long expirationMs) {
-<span class="fc" id="L50">        return Jwts.builder()</span>
-<span class="fc" id="L51">                .claims(extraClaims)</span>
-<span class="fc" id="L52">                .subject(subject)</span>
-<span class="fc" id="L53">                .issuedAt(new Date(System.currentTimeMillis()))</span>
-<span class="fc" id="L54">                .expiration(new Date(System.currentTimeMillis() + expirationMs))</span>
-<span class="fc" id="L55">                .signWith(key)</span>
-<span class="fc" id="L56">                .compact();</span>
+<span class="fc" id="L55">        return Jwts.builder()</span>
+<span class="fc" id="L56">                .claims(extraClaims)</span>
+<span class="fc" id="L57">                .subject(subject)</span>
+<span class="fc" id="L58">                .issuedAt(new Date(System.currentTimeMillis()))</span>
+<span class="fc" id="L59">                .expiration(new Date(System.currentTimeMillis() + expirationMs))</span>
+<span class="fc" id="L60">                .signWith(key)</span>
+<span class="fc" id="L61">                .compact();</span>
     }
 
     public String extractUsername(String token) {
-<span class="fc" id="L60">        return extractClaim(token, Claims::getSubject);</span>
+<span class="fc" id="L65">        return extractClaim(token, Claims::getSubject);</span>
     }
 
     public &lt;T&gt; T extractClaim(String token, Function&lt;Claims, T&gt; claimsResolver) {
-<span class="fc" id="L64">        final Claims claims = extractAllClaims(token);</span>
-<span class="fc" id="L65">        return claimsResolver.apply(claims);</span>
+<span class="fc" id="L69">        final Claims claims = extractAllClaims(token);</span>
+<span class="fc" id="L70">        return claimsResolver.apply(claims);</span>
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-<span class="fc" id="L69">        final String username = extractUsername(token);</span>
-<span class="pc bpc" id="L70" title="1 of 4 branches missed.">        return (username.equals(userDetails.getUsername())) &amp;&amp; !isTokenExpired(token);</span>
+<span class="fc" id="L74">        final String username = extractUsername(token);</span>
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">        return (username.equals(userDetails.getUsername())) &amp;&amp; !isTokenExpired(token);</span>
     }
 
-    private boolean isTokenExpired(String token) {
-<span class="fc" id="L74">        return extractExpiration(token).before(new Date());</span>
+    public String extractClaim(String token, String claimKey) {
+<span class="fc" id="L79">        return extractClaim(token, claims -&gt; claims.get(claimKey, String.class));</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public List&lt;String&gt; extractRoles(String token) {
+<span class="fc" id="L84">        return extractClaim(token, claims -&gt; claims.get(&quot;roles&quot;, List.class));</span>
+    }
+
+    public boolean isTokenExpired(String token) {
+<span class="fc" id="L88">        return extractExpiration(token).before(new Date());</span>
     }
 
     private Date extractExpiration(String token) {
-<span class="fc" id="L78">        return extractClaim(token, Claims::getExpiration);</span>
+<span class="fc" id="L92">        return extractClaim(token, Claims::getExpiration);</span>
     }
 
     private Claims extractAllClaims(String token) {
-<span class="fc" id="L82">        return Jwts.parser()</span>
-<span class="fc" id="L83">                .verifyWith(key)</span>
-<span class="fc" id="L84">                .build()</span>
-<span class="fc" id="L85">                .parseSignedClaims(token)</span>
-<span class="fc" id="L86">                .getPayload();</span>
+<span class="fc" id="L96">        return Jwts.parser()</span>
+<span class="fc" id="L97">                .verifyWith(key)</span>
+<span class="fc" id="L98">                .build()</span>
+<span class="fc" id="L99">                .parseSignedClaims(token)</span>
+<span class="fc" id="L100">                .getPayload();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

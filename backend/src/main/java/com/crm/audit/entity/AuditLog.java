@@ -43,4 +43,8 @@ public class AuditLog {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant timestamp;
+
+    @org.hibernate.annotations.TenantId
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 }

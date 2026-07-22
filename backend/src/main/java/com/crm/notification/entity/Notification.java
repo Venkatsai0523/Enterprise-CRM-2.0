@@ -38,4 +38,8 @@ public class Notification {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
+
+    @org.hibernate.annotations.TenantId
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 }

@@ -53,4 +53,8 @@ public class Opportunity {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    @org.hibernate.annotations.TenantId
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 }

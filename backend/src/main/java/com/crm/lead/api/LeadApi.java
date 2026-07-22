@@ -13,4 +13,12 @@ public interface LeadApi {
     Optional<LeadResponseDto> findLeadById(UUID leadId);
 
     boolean updateStatus(UUID leadId, String newStatus);
+
+    long countLeads();
+
+    long countLeadsByStatus(String status);
+
+    double getAverageLeadScore();
+
+    java.util.Map<String, Long> countLeadsBySource();
 }

@@ -29,4 +29,6 @@ public class UserRegistrationDto {
     private String lastName;
 
     private String roleName; // e.g., ROLE_SALES_REP or ROLE_ADMIN
+
+    private java.util.UUID organizationId;
 }

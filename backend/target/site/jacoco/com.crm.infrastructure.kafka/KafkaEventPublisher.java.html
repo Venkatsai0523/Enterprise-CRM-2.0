@@ -19,7 +19,7 @@ public class KafkaEventPublisher {
 <span class="fc" id="L19">                .whenComplete((result, ex) -&gt; {</span>
 <span class="pc bpc" id="L20" title="1 of 2 branches missed.">                    if (ex != null) {</span>
 <span class="nc" id="L21">                        log.error(&quot;Failed to publish event to topic '{}' with key '{}'&quot;, topic, key, ex);</span>
-<span class="nc" id="L22">                    } else {</span>
+                    } else {
 <span class="fc" id="L23">                        log.debug(&quot;Successfully published event to topic '{}' at offset {}&quot;, topic, result.getRecordMetadata().offset());</span>
                     }
 <span class="fc" id="L25">                });</span>

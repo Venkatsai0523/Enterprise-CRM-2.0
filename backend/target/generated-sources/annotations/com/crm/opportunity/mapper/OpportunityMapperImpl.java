@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-07-22T00:13:00+0530",
-    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)"
+    date = "2026-07-22T13:42:07+0530",
+    comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
 )
 @Component
 public class OpportunityMapperImpl implements OpportunityMapper {
@@ -22,9 +22,9 @@ public class OpportunityMapperImpl implements OpportunityMapper {
 
         Opportunity.OpportunityBuilder opportunity = Opportunity.builder();
 
-        opportunity.estimatedValue( dto.getEstimatedValue() );
-        opportunity.leadId( dto.getLeadId() );
         opportunity.title( dto.getTitle() );
+        opportunity.leadId( dto.getLeadId() );
+        opportunity.estimatedValue( dto.getEstimatedValue() );
 
         return opportunity.build();
     }
@@ -37,14 +37,14 @@ public class OpportunityMapperImpl implements OpportunityMapper {
 
         OpportunityResponseDto.OpportunityResponseDtoBuilder opportunityResponseDto = OpportunityResponseDto.builder();
 
+        opportunityResponseDto.id( opportunity.getId() );
+        opportunityResponseDto.title( opportunity.getTitle() );
+        opportunityResponseDto.leadId( opportunity.getLeadId() );
+        opportunityResponseDto.estimatedValue( opportunity.getEstimatedValue() );
+        opportunityResponseDto.stage( opportunity.getStage() );
+        opportunityResponseDto.lostReason( opportunity.getLostReason() );
         opportunityResponseDto.closedAt( opportunity.getClosedAt() );
         opportunityResponseDto.createdAt( opportunity.getCreatedAt() );
-        opportunityResponseDto.estimatedValue( opportunity.getEstimatedValue() );
-        opportunityResponseDto.id( opportunity.getId() );
-        opportunityResponseDto.leadId( opportunity.getLeadId() );
-        opportunityResponseDto.lostReason( opportunity.getLostReason() );
-        opportunityResponseDto.stage( opportunity.getStage() );
-        opportunityResponseDto.title( opportunity.getTitle() );
         opportunityResponseDto.updatedAt( opportunity.getUpdatedAt() );
 
         return opportunityResponseDto.build();

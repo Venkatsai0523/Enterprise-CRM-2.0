@@ -25,19 +25,24 @@ public class LeadScoredEventConsumer {
             groupId = "${spring.kafka.consumer.group-id:nexus-crm-group}"
     )
     public void consumeLeadScoredEvent(LeadScoredEvent event) {
-        log.info("Received LeadScoredEvent for lead ID: {}, score: {}", event.getLeadId(), event.getScore());
+        com.crm.infrastructure.tenant.TenantContext.setTenantId(event.getOrganizationId());
+        try {
+            log.info("Received LeadScoredEvent for lead ID: {}, score: {}", event.getLeadId(), event.getScore());
 
-        // Delegate to LeadAssignmentService (includes idempotent status check)
-        Optional<LeadAssignedEvent> assignedEventOpt = leadAssignmentService.assignLead(event.getLeadId());
+            // Delegate to LeadAssignmentService (includes idempotent status check)
+            Optional<LeadAssignedEvent> assignedEventOpt = leadAssignmentService.assignLead(event.getLeadId());
 
-        assignedEventOpt.ifPresent(assignedEvent -> {
-            log.info("Publishing LeadAssignedEvent for lead ID: {} assigned to Rep ID: {}",
-                    assignedEvent.getLeadId(), assignedEvent.getAssignedRepId());
-            eventPublisher.publish(
-                    KafkaTopicConfig.TOPIC_LEAD_ASSIGNED,
-                    assignedEvent.getLeadId().toString(),
-                    assignedEvent
-            );
-        });
+            assignedEventOpt.ifPresent(assignedEvent -> {
+                log.info("Publishing LeadAssignedEvent for lead ID: {} assigned to Rep ID: {}",
+                        assignedEvent.getLeadId(), assignedEvent.getAssignedRepId());
+                eventPublisher.publish(
+                        KafkaTopicConfig.TOPIC_LEAD_ASSIGNED,
+                        assignedEvent.getLeadId().toString(),
+                        assignedEvent
+                );
+            });
+        } finally {
+            com.crm.infrastructure.tenant.TenantContext.clear();
+        }
     }
 }

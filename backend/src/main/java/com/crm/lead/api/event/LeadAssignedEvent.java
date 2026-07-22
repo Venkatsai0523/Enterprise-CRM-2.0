@@ -17,6 +17,7 @@ public class LeadAssignedEvent {
     private UUID leadId;
     private UUID assignedRepId;
     private int score;
+    private UUID organizationId;
     @Builder.Default
     private Instant timestamp = Instant.now();
 }

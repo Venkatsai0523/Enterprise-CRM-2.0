@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.stream.Collectors;
 
 import java.time.Instant;
 import java.util.List;
@@ -77,6 +78,7 @@ public class OpportunityService implements OpportunityApi {
                     .leadId(opportunity.getLeadId())
                     .title(opportunity.getTitle())
                     .amount(opportunity.getEstimatedValue())
+                    .organizationId(opportunity.getOrganizationId())
                     .build());
 
         } else if (dto.getStage() == OpportunityStage.LOST) {
@@ -91,6 +93,7 @@ public class OpportunityService implements OpportunityApi {
                     .title(opportunity.getTitle())
                     .amount(opportunity.getEstimatedValue())
                     .lostReason(dto.getLostReason())
+                    .organizationId(opportunity.getOrganizationId())
                     .build());
         } else {
             opportunityRepository.save(opportunity);
@@ -133,5 +136,13 @@ public class OpportunityService implements OpportunityApi {
     @Transactional(readOnly = true)
     public boolean existsById(UUID opportunityId) {
         return opportunityRepository.existsById(opportunityId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OpportunityResponseDto> findAllOpportunities() {
+        return opportunityRepository.findAll().stream()
+                .map(opportunityMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

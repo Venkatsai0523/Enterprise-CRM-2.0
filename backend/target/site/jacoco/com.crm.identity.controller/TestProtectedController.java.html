@@ -21,7 +21,7 @@ import java.util.Map;
     @Operation(summary = &quot;Authenticated user endpoint&quot;, description = &quot;Requires any valid JWT token&quot;)
     public ResponseEntity&lt;Map&lt;String, String&gt;&gt; authenticated(@AuthenticationPrincipal UserDetails userDetails) {
 <span class="nc" id="L23">        return ResponseEntity.ok(Map.of(</span>
-<span class="nc" id="L24">                &quot;message&quot;, &quot;Authenticated successfully&quot;,</span>
+                &quot;message&quot;, &quot;Authenticated successfully&quot;,
 <span class="nc" id="L25">                &quot;username&quot;, userDetails.getUsername()</span>
         ));
     }

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2026-07-21T22:58:38+0530&quot;,
-    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)&quot;
+    date = &quot;2026-07-22T13:42:05+0530&quot;,
+    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)&quot;
 )
 @Component
 <span class="fc" id="L14">public class AuditLogMapperImpl implements AuditLogMapper {</span>
@@ -21,13 +21,13 @@ import org.springframework.stereotype.Component;
 
 <span class="fc" id="L22">        AuditLogResponseDto.AuditLogResponseDtoBuilder auditLogResponseDto = AuditLogResponseDto.builder();</span>
 
-<span class="fc" id="L24">        auditLogResponseDto.action( auditLog.getAction() );</span>
-<span class="fc" id="L25">        auditLogResponseDto.entityId( auditLog.getEntityId() );</span>
-<span class="fc" id="L26">        auditLogResponseDto.entityName( auditLog.getEntityName() );</span>
-<span class="fc" id="L27">        auditLogResponseDto.id( auditLog.getId() );</span>
-<span class="fc" id="L28">        auditLogResponseDto.newState( auditLog.getNewState() );</span>
+<span class="fc" id="L24">        auditLogResponseDto.id( auditLog.getId() );</span>
+<span class="fc" id="L25">        auditLogResponseDto.entityName( auditLog.getEntityName() );</span>
+<span class="fc" id="L26">        auditLogResponseDto.entityId( auditLog.getEntityId() );</span>
+<span class="fc" id="L27">        auditLogResponseDto.action( auditLog.getAction() );</span>
+<span class="fc" id="L28">        auditLogResponseDto.performedBy( auditLog.getPerformedBy() );</span>
 <span class="fc" id="L29">        auditLogResponseDto.oldState( auditLog.getOldState() );</span>
-<span class="fc" id="L30">        auditLogResponseDto.performedBy( auditLog.getPerformedBy() );</span>
+<span class="fc" id="L30">        auditLogResponseDto.newState( auditLog.getNewState() );</span>
 <span class="fc" id="L31">        auditLogResponseDto.timestamp( auditLog.getTimestamp() );</span>
 
 <span class="fc" id="L33">        return auditLogResponseDto.build();</span>

@@ -19,6 +19,7 @@ public class DealWonEvent {
     private UUID leadId;
     private String title;
     private BigDecimal amount;
+    private UUID organizationId;
     @Builder.Default
     private Instant timestamp = Instant.now();
 }

@@ -32,36 +32,41 @@ public class DealWonConsumer {
     )
     @Transactional
     public void consumeDealWonEvent(DealWonEvent event) {
-<span class="fc" id="L35">        log.info(&quot;Received DealWonEvent for opportunity ID: {}, lead ID: {}&quot;, event.getOpportunityId(), event.getLeadId());</span>
+<span class="fc" id="L35">        com.crm.infrastructure.tenant.TenantContext.setTenantId(event.getOrganizationId());</span>
+        try {
+<span class="fc" id="L37">            log.info(&quot;Received DealWonEvent for opportunity ID: {}, lead ID: {}&quot;, event.getOpportunityId(), event.getLeadId());</span>
 
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (linkRepository.existsByOpportunityId(event.getOpportunityId())) {</span>
-<span class="nc" id="L38">            log.info(&quot;Opportunity ID {} is already linked to a Customer Account, skipping (idempotent guard)&quot;, event.getOpportunityId());</span>
-<span class="nc" id="L39">            return;</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            if (linkRepository.existsByOpportunityId(event.getOpportunityId())) {</span>
+<span class="nc" id="L40">                log.info(&quot;Opportunity ID {} is already linked to a Customer Account, skipping (idempotent guard)&quot;, event.getOpportunityId());</span>
+<span class="nc" id="L41">                return;</span>
+            }
+
+<span class="fc" id="L44">            Optional&lt;LeadResponseDto&gt; leadOpt = leadApi.findLeadById(event.getLeadId());</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            if (leadOpt.isEmpty()) {</span>
+<span class="fc" id="L46">                log.warn(&quot;Lead ID {} not found for deal conversion&quot;, event.getLeadId());</span>
+<span class="fc" id="L47">                return;</span>
+            }
+
+<span class="fc" id="L50">            LeadResponseDto lead = leadOpt.get();</span>
+
+            // 1. Perform deduplication &amp; find/create CustomerAccount
+<span class="fc" id="L53">            CustomerAccount account = customerDedupService.findOrCreateCustomerAccount(lead);</span>
+
+            // 2. Link Opportunity to CustomerAccount
+<span class="fc" id="L56">            CustomerOpportunityLink link = CustomerOpportunityLink.builder()</span>
+<span class="fc" id="L57">                    .customerAccountId(account.getId())</span>
+<span class="fc" id="L58">                    .opportunityId(event.getOpportunityId())</span>
+<span class="fc" id="L59">                    .build();</span>
+<span class="fc" id="L60">            linkRepository.save(link);</span>
+
+            // 3. Mark Lead as CONVERTED in Lead domain
+<span class="fc" id="L63">            leadApi.updateStatus(lead.getId(), &quot;CONVERTED&quot;);</span>
+
+<span class="fc" id="L65">            log.info(&quot;Successfully converted deal {} into Customer Account ID '{}' (Lead {} updated to CONVERTED)&quot;,</span>
+<span class="fc" id="L66">                    event.getOpportunityId(), account.getId(), lead.getId());</span>
+        } finally {
+<span class="fc" id="L68">            com.crm.infrastructure.tenant.TenantContext.clear();</span>
         }
-
-<span class="fc" id="L42">        Optional&lt;LeadResponseDto&gt; leadOpt = leadApi.findLeadById(event.getLeadId());</span>
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if (leadOpt.isEmpty()) {</span>
-<span class="nc" id="L44">            log.warn(&quot;Lead ID {} not found for deal conversion&quot;, event.getLeadId());</span>
-<span class="nc" id="L45">            return;</span>
-        }
-
-<span class="fc" id="L48">        LeadResponseDto lead = leadOpt.get();</span>
-
-        // 1. Perform deduplication &amp; find/create CustomerAccount
-<span class="fc" id="L51">        CustomerAccount account = customerDedupService.findOrCreateCustomerAccount(lead);</span>
-
-        // 2. Link Opportunity to CustomerAccount
-<span class="fc" id="L54">        CustomerOpportunityLink link = CustomerOpportunityLink.builder()</span>
-<span class="fc" id="L55">                .customerAccountId(account.getId())</span>
-<span class="fc" id="L56">                .opportunityId(event.getOpportunityId())</span>
-<span class="fc" id="L57">                .build();</span>
-<span class="fc" id="L58">        linkRepository.save(link);</span>
-
-        // 3. Mark Lead as CONVERTED in Lead domain
-<span class="fc" id="L61">        leadApi.updateStatus(lead.getId(), &quot;CONVERTED&quot;);</span>
-
-<span class="fc" id="L63">        log.info(&quot;Successfully converted deal {} into Customer Account ID '{}' (Lead {} updated to CONVERTED)&quot;,</span>
-<span class="fc" id="L64">                event.getOpportunityId(), account.getId(), lead.getId());</span>
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L70">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,6 +1,7 @@
 package com.crm.customer.api.dto;
 
 import com.crm.opportunity.api.dto.OpportunityResponseDto;
+import com.crm.task.api.dto.TaskResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class Customer360ResponseDto {
     private BigDecimal totalLifetimeValue;
     private int opportunityCount;
     private List<OpportunityResponseDto> linkedOpportunities;
+    private List<TaskResponseDto> activities;
     private Instant createdAt;
     private Instant updatedAt;
 }

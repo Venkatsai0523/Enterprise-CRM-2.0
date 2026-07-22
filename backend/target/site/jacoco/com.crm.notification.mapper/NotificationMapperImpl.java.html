@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2026-07-21T22:58:38+0530&quot;,
-    comments = &quot;version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)&quot;
+    date = &quot;2026-07-22T13:42:07+0530&quot;,
+    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)&quot;
 )
 @Component
 <span class="fc" id="L14">public class NotificationMapperImpl implements NotificationMapper {</span>
@@ -21,12 +21,12 @@ import org.springframework.stereotype.Component;
 
 <span class="fc" id="L22">        NotificationResponseDto.NotificationResponseDtoBuilder notificationResponseDto = NotificationResponseDto.builder();</span>
 
-<span class="fc" id="L24">        notificationResponseDto.createdAt( notification.getCreatedAt() );</span>
-<span class="fc" id="L25">        notificationResponseDto.id( notification.getId() );</span>
-<span class="fc" id="L26">        notificationResponseDto.message( notification.getMessage() );</span>
-<span class="fc" id="L27">        notificationResponseDto.read( notification.isRead() );</span>
-<span class="fc" id="L28">        notificationResponseDto.recipientId( notification.getRecipientId() );</span>
-<span class="fc" id="L29">        notificationResponseDto.type( notification.getType() );</span>
+<span class="fc" id="L24">        notificationResponseDto.id( notification.getId() );</span>
+<span class="fc" id="L25">        notificationResponseDto.recipientId( notification.getRecipientId() );</span>
+<span class="fc" id="L26">        notificationResponseDto.type( notification.getType() );</span>
+<span class="fc" id="L27">        notificationResponseDto.message( notification.getMessage() );</span>
+<span class="fc" id="L28">        notificationResponseDto.read( notification.isRead() );</span>
+<span class="fc" id="L29">        notificationResponseDto.createdAt( notification.getCreatedAt() );</span>
 
 <span class="fc" id="L31">        return notificationResponseDto.build();</span>
     }

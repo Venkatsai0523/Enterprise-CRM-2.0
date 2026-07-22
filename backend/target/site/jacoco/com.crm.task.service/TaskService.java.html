@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TaskService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.task.service</a> &gt; <span class="el_source">TaskService.java</span></div><h1>TaskService.java</h1><pre class="source lang-java linenums">package com.crm.task.service;
+
+import com.crm.audit.api.AuditApi;
+import com.crm.common.exception.ResourceNotFoundException;
+import com.crm.common.exception.BadRequestException;
+import com.crm.identity.api.IdentityApi;
+import com.crm.infrastructure.kafka.KafkaEventPublisher;
+import com.crm.infrastructure.kafka.KafkaTopicConfig;
+import com.crm.lead.api.LeadApi;
+import com.crm.opportunity.api.OpportunityApi;
+import com.crm.task.api.TaskApi;
+import com.crm.task.api.dto.*;
+import com.crm.task.api.event.TaskAssignedEvent;
+import com.crm.task.entity.Task;
+import com.crm.task.mapper.TaskMapper;
+import com.crm.task.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+<span class="fc" id="L31">@Slf4j</span>
+@SuppressWarnings(&quot;null&quot;)
+public class TaskService implements TaskApi {
+
+    private final TaskRepository taskRepository;
+    private final TaskMapper taskMapper;
+    private final IdentityApi identityApi;
+    private final LeadApi leadApi;
+    private final OpportunityApi opportunityApi;
+    private final KafkaEventPublisher eventPublisher;
+    private final AuditApi auditApi;
+
+    @Transactional
+    public TaskResponseDto createTask(TaskCreateDto dto) {
+<span class="fc" id="L45">        validateAssignedUser(dto.getAssignedTo());</span>
+<span class="fc" id="L46">        validateRelatedObject(dto.getRelatedToType(), dto.getRelatedToId());</span>
+
+<span class="fc" id="L48">        Task task = taskMapper.toEntity(dto);</span>
+<span class="fc" id="L49">        Task savedTask = taskRepository.save(task);</span>
+<span class="fc" id="L50">        log.info(&quot;Created task ID: '{}' assigned to: '{}'&quot;, savedTask.getId(), savedTask.getAssignedTo());</span>
+
+        // Publish task assignment event
+<span class="fc" id="L53">        publishTaskAssigned(savedTask);</span>
+
+        // Record audit
+<span class="fc" id="L56">        auditApi.recordAudit(&quot;TASK&quot;, savedTask.getId().toString(), &quot;TASK_CREATED&quot;, &quot;user&quot;, null,</span>
+<span class="fc" id="L57">                savedTask.getStatus().name());</span>
+
+<span class="fc" id="L59">        return taskMapper.toDto(savedTask);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public TaskResponseDto getTaskById(UUID id) {
+<span class="nc" id="L64">        Task task = taskRepository.findById(id)</span>
+<span class="nc" id="L65">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Task not found with ID: &quot; + id));</span>
+<span class="nc" id="L66">        return taskMapper.toDto(task);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public Page&lt;TaskResponseDto&gt; getTasksWithFilters(UUID assignedTo, TaskStatus status, String relatedToType,
+            UUID relatedToId, int page, int size) {
+<span class="nc" id="L72">        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));</span>
+<span class="nc" id="L73">        return taskRepository.findWithFilters(assignedTo, status, relatedToType, relatedToId, pageRequest)</span>
+<span class="nc" id="L74">                .map(taskMapper::toDto);</span>
+    }
+
+    @Transactional
+    public TaskResponseDto updateTask(UUID id, TaskUpdateDto dto) {
+<span class="nc" id="L79">        Task task = taskRepository.findById(id)</span>
+<span class="nc" id="L80">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Task not found with ID: &quot; + id));</span>
+
+<span class="nc" id="L82">        validateAssignedUser(dto.getAssignedTo());</span>
+<span class="nc" id="L83">        validateRelatedObject(dto.getRelatedToType(), dto.getRelatedToId());</span>
+
+<span class="nc" id="L85">        UUID oldAssignee = task.getAssignedTo();</span>
+<span class="nc" id="L86">        TaskStatus oldStatus = task.getStatus();</span>
+
+<span class="nc" id="L88">        taskMapper.updateEntityFromDto(dto, task);</span>
+<span class="nc" id="L89">        Task updatedTask = taskRepository.save(task);</span>
+<span class="nc" id="L90">        log.info(&quot;Updated task ID: '{}'&quot;, updatedTask.getId());</span>
+
+        // If assignee changed, publish new assignment event
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (!dto.getAssignedTo().equals(oldAssignee)) {</span>
+<span class="nc" id="L94">            publishTaskAssigned(updatedTask);</span>
+        }
+
+        // Record audit logs
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (dto.getStatus() != oldStatus) {</span>
+<span class="nc" id="L99">            auditApi.recordAudit(&quot;TASK&quot;, updatedTask.getId().toString(), &quot;STATUS_CHANGE&quot;, &quot;user&quot;, oldStatus.name(),</span>
+<span class="nc" id="L100">                    dto.getStatus().name());</span>
+        }
+<span class="nc" id="L102">        auditApi.recordAudit(&quot;TASK&quot;, updatedTask.getId().toString(), &quot;TASK_UPDATED&quot;, &quot;user&quot;, null, null);</span>
+
+<span class="nc" id="L104">        return taskMapper.toDto(updatedTask);</span>
+    }
+
+    @Transactional
+    public TaskResponseDto updateTaskStatus(UUID id, TaskStatus status) {
+<span class="fc" id="L109">        Task task = taskRepository.findById(id)</span>
+<span class="pc" id="L110">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Task not found with ID: &quot; + id));</span>
+
+<span class="fc" id="L112">        TaskStatus oldStatus = task.getStatus();</span>
+<span class="fc" id="L113">        task.setStatus(status);</span>
+<span class="fc" id="L114">        Task updatedTask = taskRepository.save(task);</span>
+<span class="fc" id="L115">        log.info(&quot;Updated status for task ID: '{}' from {} to {}&quot;, id, oldStatus, status);</span>
+
+<span class="fc" id="L117">        auditApi.recordAudit(&quot;TASK&quot;, updatedTask.getId().toString(), &quot;STATUS_CHANGE&quot;, &quot;user&quot;, oldStatus.name(),</span>
+<span class="fc" id="L118">                status.name());</span>
+
+<span class="fc" id="L120">        return taskMapper.toDto(updatedTask);</span>
+    }
+
+    @Transactional
+    public void deleteTask(UUID id) {
+<span class="nc" id="L125">        Task task = taskRepository.findById(id)</span>
+<span class="nc" id="L126">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Task not found with ID: &quot; + id));</span>
+<span class="nc" id="L127">        taskRepository.delete(task);</span>
+<span class="nc" id="L128">        log.info(&quot;Deleted task ID: '{}'&quot;, id);</span>
+
+<span class="nc" id="L130">        auditApi.recordAudit(&quot;TASK&quot;, id.toString(), &quot;TASK_DELETED&quot;, &quot;user&quot;, task.getStatus().name(), null);</span>
+<span class="nc" id="L131">    }</span>
+
+    // --- TaskApi implementation ---
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;TaskResponseDto&gt; findTasksByRelatedObject(String relatedToType, UUID relatedToId) {
+<span class="fc" id="L137">        return taskRepository.findByRelatedToTypeAndRelatedToId(relatedToType, relatedToId).stream()</span>
+<span class="fc" id="L138">                .map(taskMapper::toDto)</span>
+<span class="fc" id="L139">                .collect(Collectors.toList());</span>
+    }
+
+    // --- Validation Helpers ---
+    private void validateAssignedUser(UUID userId) {
+<span class="pc bpc" id="L144" title="1 of 4 branches missed.">        if (userId != null &amp;&amp; !identityApi.existsById(userId)) {</span>
+<span class="fc" id="L145">            throw new ResourceNotFoundException(&quot;Assigned user not found with ID: &quot; + userId);</span>
+        }
+<span class="fc" id="L147">    }</span>
+
+    private void validateRelatedObject(String relatedToType, UUID relatedToId) {
+<span class="pc bpc" id="L150" title="2 of 4 branches missed.">        if (relatedToType == null || relatedToId == null) {</span>
+<span class="nc" id="L151">            return;</span>
+        }
+
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if (&quot;LEAD&quot;.equalsIgnoreCase(relatedToType)) {</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            if (!leadApi.findLeadById(relatedToId).isPresent()) {</span>
+<span class="fc" id="L156">                throw new ResourceNotFoundException(&quot;Related Lead not found with ID: &quot; + relatedToId);</span>
+            }
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        } else if (&quot;OPPORTUNITY&quot;.equalsIgnoreCase(relatedToType)) {</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            if (!opportunityApi.existsById(relatedToId)) {</span>
+<span class="nc" id="L160">                throw new ResourceNotFoundException(&quot;Related Opportunity not found with ID: &quot; + relatedToId);</span>
+            }
+        } else {
+<span class="nc" id="L163">            throw new BadRequestException(&quot;Invalid relatedToType: &quot; + relatedToType + &quot;. Must be LEAD or OPPORTUNITY&quot;);</span>
+        }
+<span class="fc" id="L165">    }</span>
+
+    private void publishTaskAssigned(Task task) {
+<span class="fc" id="L168">        eventPublisher.publish(</span>
+                KafkaTopicConfig.TOPIC_TASK_ASSIGNED,
+<span class="fc" id="L170">                task.getId().toString(),</span>
+<span class="fc" id="L171">                TaskAssignedEvent.builder()</span>
+<span class="fc" id="L172">                        .taskId(task.getId())</span>
+<span class="fc" id="L173">                        .assignedTo(task.getAssignedTo())</span>
+<span class="fc" id="L174">                        .title(task.getTitle())</span>
+<span class="fc" id="L175">                        .dueDate(task.getDueDate())</span>
+<span class="fc" id="L176">                        .build());</span>
+<span class="fc" id="L177">    }</span>
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countTasksByStatus(String status) {
+<span class="fc" id="L182">        return taskRepository.countByStatus(TaskStatus.valueOf(status.toUpperCase()));</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countOverdueTasks() {
+<span class="fc" id="L188">        return taskRepository.countOverdueTasks(java.time.Instant.now());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

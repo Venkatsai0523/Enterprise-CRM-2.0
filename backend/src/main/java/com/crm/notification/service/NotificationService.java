@@ -14,11 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import com.crm.notification.api.NotificationApi;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("null")
-public class NotificationService {
+public class NotificationService implements NotificationApi {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
@@ -38,6 +40,20 @@ public class NotificationService {
         notification.setRead(true);
         Notification saved = notificationRepository.save(notification);
         log.info("Notification '{}' marked as read.", notificationId);
+        return notificationMapper.toDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public NotificationResponseDto sendNotification(UUID recipientId, String type, String message) {
+        Notification notification = Notification.builder()
+                .recipientId(recipientId)
+                .type(type)
+                .message(message)
+                .read(false)
+                .build();
+        Notification saved = notificationRepository.save(notification);
+        log.info("Notification sent to recipient: {} with type: {}", recipientId, type);
         return notificationMapper.toDto(saved);
     }
 }

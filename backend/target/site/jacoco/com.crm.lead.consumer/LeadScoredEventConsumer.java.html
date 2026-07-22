@@ -25,20 +25,25 @@ public class LeadScoredEventConsumer {
             groupId = &quot;${spring.kafka.consumer.group-id:nexus-crm-group}&quot;
     )
     public void consumeLeadScoredEvent(LeadScoredEvent event) {
-<span class="fc" id="L28">        log.info(&quot;Received LeadScoredEvent for lead ID: {}, score: {}&quot;, event.getLeadId(), event.getScore());</span>
+<span class="fc" id="L28">        com.crm.infrastructure.tenant.TenantContext.setTenantId(event.getOrganizationId());</span>
+        try {
+<span class="fc" id="L30">            log.info(&quot;Received LeadScoredEvent for lead ID: {}, score: {}&quot;, event.getLeadId(), event.getScore());</span>
 
-        // Delegate to LeadAssignmentService (includes idempotent status check)
-<span class="fc" id="L31">        Optional&lt;LeadAssignedEvent&gt; assignedEventOpt = leadAssignmentService.assignLead(event.getLeadId());</span>
+            // Delegate to LeadAssignmentService (includes idempotent status check)
+<span class="fc" id="L33">            Optional&lt;LeadAssignedEvent&gt; assignedEventOpt = leadAssignmentService.assignLead(event.getLeadId());</span>
 
-<span class="fc" id="L33">        assignedEventOpt.ifPresent(assignedEvent -&gt; {</span>
-<span class="fc" id="L34">            log.info(&quot;Publishing LeadAssignedEvent for lead ID: {} assigned to Rep ID: {}&quot;,</span>
-<span class="fc" id="L35">                    assignedEvent.getLeadId(), assignedEvent.getAssignedRepId());</span>
-<span class="fc" id="L36">            eventPublisher.publish(</span>
-<span class="fc" id="L37">                    KafkaTopicConfig.TOPIC_LEAD_ASSIGNED,</span>
-<span class="fc" id="L38">                    assignedEvent.getLeadId().toString(),</span>
-<span class="fc" id="L39">                    assignedEvent</span>
-            );
-<span class="fc" id="L41">        });</span>
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L35">            assignedEventOpt.ifPresent(assignedEvent -&gt; {</span>
+<span class="fc" id="L36">                log.info(&quot;Publishing LeadAssignedEvent for lead ID: {} assigned to Rep ID: {}&quot;,</span>
+<span class="fc" id="L37">                        assignedEvent.getLeadId(), assignedEvent.getAssignedRepId());</span>
+<span class="fc" id="L38">                eventPublisher.publish(</span>
+                        KafkaTopicConfig.TOPIC_LEAD_ASSIGNED,
+<span class="fc" id="L40">                        assignedEvent.getLeadId().toString(),</span>
+                        assignedEvent
+                );
+<span class="fc" id="L43">            });</span>
+        } finally {
+<span class="fc" id="L45">            com.crm.infrastructure.tenant.TenantContext.clear();</span>
+        }
+<span class="fc" id="L47">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

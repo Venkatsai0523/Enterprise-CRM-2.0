@@ -13,4 +13,6 @@ public interface OpportunityApi {
     Optional<OpportunityResponseDto> findOpportunityById(UUID opportunityId);
 
     boolean existsById(UUID opportunityId);
+
+    java.util.List<OpportunityResponseDto> findAllOpportunities();
 }

@@ -11,6 +11,8 @@ import com.crm.customer.repository.CustomerAccountRepository;
 import com.crm.customer.repository.CustomerOpportunityLinkRepository;
 import com.crm.opportunity.api.OpportunityApi;
 import com.crm.opportunity.api.dto.OpportunityResponseDto;
+import com.crm.task.api.TaskApi;
+import com.crm.task.api.dto.TaskResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,7 @@ public class CustomerService implements CustomerApi {
     private final CustomerOpportunityLinkRepository linkRepository;
     private final CustomerMapper customerMapper;
     private final OpportunityApi opportunityApi;
+    private final TaskApi taskApi;
 
     @Transactional(readOnly = true)
     public Customer360ResponseDto getCustomer360(UUID customerAccountId) {
@@ -51,6 +54,10 @@ public class CustomerService implements CustomerApi {
                 .map(OpportunityResponseDto::getEstimatedValue)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        List<TaskResponseDto> activities = linkedOpportunities.stream()
+                .flatMap(opp -> taskApi.findTasksByRelatedObject("OPPORTUNITY", opp.getId()).stream())
+                .toList();
+
         return Customer360ResponseDto.builder()
                 .id(account.getId())
                 .accountName(account.getAccountName())
@@ -61,6 +68,7 @@ public class CustomerService implements CustomerApi {
                 .totalLifetimeValue(totalLifetimeValue)
                 .opportunityCount(linkedOpportunities.size())
                 .linkedOpportunities(linkedOpportunities)
+                .activities(activities)
                 .createdAt(account.getCreatedAt())
                 .updatedAt(account.getUpdatedAt())
                 .build();

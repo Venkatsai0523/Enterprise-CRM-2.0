@@ -12,37 +12,46 @@ import org.springframework.kafka.config.TopicBuilder;
     public static final String TOPIC_LEAD_ASSIGNED = &quot;lead.assigned&quot;;
     public static final String TOPIC_DEAL_WON = &quot;opportunity.deal-won&quot;;
     public static final String TOPIC_DEAL_LOST = &quot;opportunity.deal-lost&quot;;
+    public static final String TOPIC_TASK_ASSIGNED = &quot;task.assigned&quot;;
 
     @Bean
     public NewTopic leadScoredTopic() {
-<span class="fc" id="L18">        return TopicBuilder.name(TOPIC_LEAD_SCORED)</span>
-<span class="fc" id="L19">                .partitions(1)</span>
-<span class="fc" id="L20">                .replicas(1)</span>
-<span class="fc" id="L21">                .build();</span>
+<span class="fc" id="L19">        return TopicBuilder.name(TOPIC_LEAD_SCORED)</span>
+<span class="fc" id="L20">                .partitions(1)</span>
+<span class="fc" id="L21">                .replicas(1)</span>
+<span class="fc" id="L22">                .build();</span>
     }
 
     @Bean
     public NewTopic leadAssignedTopic() {
-<span class="fc" id="L26">        return TopicBuilder.name(TOPIC_LEAD_ASSIGNED)</span>
-<span class="fc" id="L27">                .partitions(1)</span>
-<span class="fc" id="L28">                .replicas(1)</span>
-<span class="fc" id="L29">                .build();</span>
+<span class="fc" id="L27">        return TopicBuilder.name(TOPIC_LEAD_ASSIGNED)</span>
+<span class="fc" id="L28">                .partitions(1)</span>
+<span class="fc" id="L29">                .replicas(1)</span>
+<span class="fc" id="L30">                .build();</span>
     }
 
     @Bean
     public NewTopic dealWonTopic() {
-<span class="fc" id="L34">        return TopicBuilder.name(TOPIC_DEAL_WON)</span>
-<span class="fc" id="L35">                .partitions(1)</span>
-<span class="fc" id="L36">                .replicas(1)</span>
-<span class="fc" id="L37">                .build();</span>
+<span class="fc" id="L35">        return TopicBuilder.name(TOPIC_DEAL_WON)</span>
+<span class="fc" id="L36">                .partitions(1)</span>
+<span class="fc" id="L37">                .replicas(1)</span>
+<span class="fc" id="L38">                .build();</span>
     }
 
     @Bean
     public NewTopic dealLostTopic() {
-<span class="fc" id="L42">        return TopicBuilder.name(TOPIC_DEAL_LOST)</span>
-<span class="fc" id="L43">                .partitions(1)</span>
-<span class="fc" id="L44">                .replicas(1)</span>
-<span class="fc" id="L45">                .build();</span>
+<span class="fc" id="L43">        return TopicBuilder.name(TOPIC_DEAL_LOST)</span>
+<span class="fc" id="L44">                .partitions(1)</span>
+<span class="fc" id="L45">                .replicas(1)</span>
+<span class="fc" id="L46">                .build();</span>
+    }
+
+    @Bean
+    public NewTopic taskAssignedTopic() {
+<span class="fc" id="L51">        return TopicBuilder.name(TOPIC_TASK_ASSIGNED)</span>
+<span class="fc" id="L52">                .partitions(1)</span>
+<span class="fc" id="L53">                .replicas(1)</span>
+<span class="fc" id="L54">                .build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

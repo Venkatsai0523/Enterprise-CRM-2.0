@@ -12,8 +12,8 @@ import java.util.Set;
 <span class="fc" id="L12">public class LeadScoringService {</span>
 
 <span class="fc" id="L14">    private static final Set&lt;String&gt; FREE_EMAIL_PROVIDERS = Set.of(</span>
-<span class="fc" id="L15">            &quot;gmail.com&quot;, &quot;yahoo.com&quot;, &quot;hotmail.com&quot;, &quot;outlook.com&quot;, &quot;icloud.com&quot;</span>
-<span class="fc" id="L16">    );</span>
+            &quot;gmail.com&quot;, &quot;yahoo.com&quot;, &quot;hotmail.com&quot;, &quot;outlook.com&quot;, &quot;icloud.com&quot;
+    );
 
     public int calculateScore(Lead lead) {
 <span class="fc" id="L19">        int score = 0;</span>
@@ -39,7 +39,7 @@ import java.util.Set;
 <span class="fc" id="L39">                score += 20;</span>
 <span class="pc bpc" id="L40" title="1 of 2 branches missed.">            } else if (size.contains(&quot;20-99&quot;)) {</span>
 <span class="nc" id="L41">                score += 10;</span>
-<span class="nc" id="L42">            } else {</span>
+            } else {
 <span class="fc" id="L43">                score += 5;</span>
             }
         }
