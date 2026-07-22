@@ -27,12 +27,13 @@ nexus-crm,com.crm.workflow.mapper,WorkflowRuleMapperImpl,28,82,4,2,10,20,4,3,1,3
 nexus-crm,com.crm.task.service,TaskService,206,197,12,8,33,41,16,11,8,9
 nexus-crm,com.crm.common.exception,ResourceNotFoundException,0,4,0,0,0,2,0,1,0,1
 nexus-crm,com.crm.common.exception,BadRequestException,0,4,0,0,0,2,0,1,0,1
-nexus-crm,com.crm.common.exception,GlobalExceptionHandler,209,0,4,0,73,0,12,0,10,0
+nexus-crm,com.crm.common.exception,GlobalExceptionHandler,191,0,4,0,72,0,12,0,10,0
 nexus-crm,com.crm.lead.api.dto,LeadStatus,0,33,0,0,0,6,0,1,0,1
 nexus-crm,com.crm.opportunity.api.dto,OpportunityStage,0,33,0,0,0,6,0,1,0,1
 nexus-crm,com.crm.workflow.controller,WorkflowRuleController,37,0,0,0,9,0,4,0,4,0
 nexus-crm,com.crm.infrastructure.security,JwtAuthenticationFilter,6,112,7,9,3,33,7,2,0,1
 nexus-crm,com.crm.infrastructure.security,SecurityConfig,110,0,0,0,24,0,8,0,8,0
+nexus-crm,com.crm.common.response,StandardResponseAdvice,64,0,16,0,20,0,11,0,3,0
 nexus-crm,com.crm.organization.controller,OrganizationController,48,0,0,0,12,0,5,0,5,0
 nexus-crm,com.crm.identity.api.dto,CustomUserDetails,0,18,0,0,0,7,0,7,0,7
 nexus-crm,com.crm.identity.mapper,UserMapperImpl,2,47,1,1,1,11,1,2,0,2

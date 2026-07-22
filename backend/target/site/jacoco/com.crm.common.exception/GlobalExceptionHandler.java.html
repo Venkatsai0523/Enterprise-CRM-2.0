@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nexus-crm</a> &gt; <a href="index.source.html" class="el_package">com.crm.common.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.crm.common.exception;
 
+import com.crm.common.response.StandardResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,110 +15,109 @@ import java.time.Instant;
 import java.util.List;
 
 @RestControllerAdvice
-<span class="nc" id="L17">public class GlobalExceptionHandler {</span>
+<span class="nc" id="L18">public class GlobalExceptionHandler {</span>
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity&lt;ErrorResponse&gt; handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
-<span class="nc" id="L21">        ErrorResponse errorResponse = ErrorResponse.builder()</span>
-<span class="nc" id="L22">                .timestamp(Instant.now())</span>
-<span class="nc" id="L23">                .status(HttpStatus.NOT_FOUND.value())</span>
-<span class="nc" id="L24">                .error(HttpStatus.NOT_FOUND.getReasonPhrase())</span>
-<span class="nc" id="L25">                .message(ex.getMessage())</span>
-<span class="nc" id="L26">                .path(request.getRequestURI())</span>
-<span class="nc" id="L27">                .build();</span>
-<span class="nc" id="L28">        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);</span>
+    public ResponseEntity&lt;StandardResponse&lt;Object&gt;&gt; handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+<span class="nc" id="L22">        StandardResponse&lt;Object&gt; errorResponse = StandardResponse.builder()</span>
+<span class="nc" id="L23">                .success(false)</span>
+<span class="nc" id="L24">                .message(ex.getMessage())</span>
+<span class="nc" id="L25">                .data(null)</span>
+<span class="nc" id="L26">                .timestamp(Instant.now())</span>
+<span class="nc" id="L27">                .path(request.getRequestURI())</span>
+<span class="nc" id="L28">                .build();</span>
+<span class="nc" id="L29">        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);</span>
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity&lt;ErrorResponse&gt; handleBadRequest(BadRequestException ex, HttpServletRequest request) {
-<span class="nc" id="L33">        ErrorResponse errorResponse = ErrorResponse.builder()</span>
-<span class="nc" id="L34">                .timestamp(Instant.now())</span>
-<span class="nc" id="L35">                .status(HttpStatus.BAD_REQUEST.value())</span>
-<span class="nc" id="L36">                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())</span>
-<span class="nc" id="L37">                .message(ex.getMessage())</span>
-<span class="nc" id="L38">                .path(request.getRequestURI())</span>
-<span class="nc" id="L39">                .build();</span>
-<span class="nc" id="L40">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</span>
+    public ResponseEntity&lt;StandardResponse&lt;Object&gt;&gt; handleBadRequest(BadRequestException ex, HttpServletRequest request) {
+<span class="nc" id="L34">        StandardResponse&lt;Object&gt; errorResponse = StandardResponse.builder()</span>
+<span class="nc" id="L35">                .success(false)</span>
+<span class="nc" id="L36">                .message(ex.getMessage())</span>
+<span class="nc" id="L37">                .data(null)</span>
+<span class="nc" id="L38">                .timestamp(Instant.now())</span>
+<span class="nc" id="L39">                .path(request.getRequestURI())</span>
+<span class="nc" id="L40">                .build();</span>
+<span class="nc" id="L41">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</span>
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity&lt;ErrorResponse&gt; handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
-<span class="nc" id="L45">        ErrorResponse errorResponse = ErrorResponse.builder()</span>
-<span class="nc" id="L46">                .timestamp(Instant.now())</span>
-<span class="nc" id="L47">                .status(HttpStatus.UNAUTHORIZED.value())</span>
-<span class="nc" id="L48">                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())</span>
-<span class="nc" id="L49">                .message(&quot;Invalid email or password&quot;)</span>
-<span class="nc" id="L50">                .path(request.getRequestURI())</span>
-<span class="nc" id="L51">                .build();</span>
-<span class="nc" id="L52">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);</span>
+    public ResponseEntity&lt;StandardResponse&lt;Object&gt;&gt; handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
+<span class="nc" id="L46">        StandardResponse&lt;Object&gt; errorResponse = StandardResponse.builder()</span>
+<span class="nc" id="L47">                .success(false)</span>
+<span class="nc" id="L48">                .message(&quot;Invalid email or password&quot;)</span>
+<span class="nc" id="L49">                .data(null)</span>
+<span class="nc" id="L50">                .timestamp(Instant.now())</span>
+<span class="nc" id="L51">                .path(request.getRequestURI())</span>
+<span class="nc" id="L52">                .build();</span>
+<span class="nc" id="L53">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);</span>
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity&lt;ErrorResponse&gt; handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
-<span class="nc" id="L57">        ErrorResponse errorResponse = ErrorResponse.builder()</span>
-<span class="nc" id="L58">                .timestamp(Instant.now())</span>
-<span class="nc" id="L59">                .status(HttpStatus.FORBIDDEN.value())</span>
-<span class="nc" id="L60">                .error(HttpStatus.FORBIDDEN.getReasonPhrase())</span>
-<span class="nc" id="L61">                .message(&quot;Access denied: You do not have permission to access this resource&quot;)</span>
-<span class="nc" id="L62">                .path(request.getRequestURI())</span>
-<span class="nc" id="L63">                .build();</span>
-<span class="nc" id="L64">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);</span>
+    public ResponseEntity&lt;StandardResponse&lt;Object&gt;&gt; handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+<span class="nc" id="L58">        StandardResponse&lt;Object&gt; errorResponse = StandardResponse.builder()</span>
+<span class="nc" id="L59">                .success(false)</span>
+<span class="nc" id="L60">                .message(&quot;Access denied: You do not have permission to access this resource&quot;)</span>
+<span class="nc" id="L61">                .data(null)</span>
+<span class="nc" id="L62">                .timestamp(Instant.now())</span>
+<span class="nc" id="L63">                .path(request.getRequestURI())</span>
+<span class="nc" id="L64">                .build();</span>
+<span class="nc" id="L65">        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);</span>
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity&lt;ErrorResponse&gt; handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
-<span class="nc" id="L69">        List&lt;ErrorResponse.FieldErrorDetail&gt; fieldErrors = ex.getBindingResult()</span>
-<span class="nc" id="L70">                .getAllErrors()</span>
-<span class="nc" id="L71">                .stream()</span>
-<span class="nc" id="L72">                .map(error -&gt; {</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">                    String fieldName = (error instanceof FieldError) ? ((FieldError) error).getField() : error.getObjectName();</span>
-<span class="nc" id="L74">                    return new ErrorResponse.FieldErrorDetail(fieldName, error.getDefaultMessage());</span>
+    public ResponseEntity&lt;StandardResponse&lt;Object&gt;&gt; handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
+<span class="nc" id="L70">        List&lt;ErrorResponse.FieldErrorDetail&gt; fieldErrors = ex.getBindingResult()</span>
+<span class="nc" id="L71">                .getAllErrors()</span>
+<span class="nc" id="L72">                .stream()</span>
+<span class="nc" id="L73">                .map(error -&gt; {</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                    String fieldName = (error instanceof FieldError) ? ((FieldError) error).getField() : error.getObjectName();</span>
+<span class="nc" id="L75">                    return new ErrorResponse.FieldErrorDetail(fieldName, error.getDefaultMessage());</span>
                 })
-<span class="nc" id="L76">                .toList();</span>
+<span class="nc" id="L77">                .toList();</span>
 
-<span class="nc" id="L78">        ErrorResponse errorResponse = ErrorResponse.builder()</span>
-<span class="nc" id="L79">                .timestamp(Instant.now())</span>
-<span class="nc" id="L80">                .status(HttpStatus.BAD_REQUEST.value())</span>
-<span class="nc" id="L81">                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())</span>
-<span class="nc" id="L82">                .message(&quot;Validation failed for input arguments&quot;)</span>
-<span class="nc" id="L83">                .path(request.getRequestURI())</span>
-<span class="nc" id="L84">                .validationErrors(fieldErrors)</span>
+<span class="nc" id="L79">        StandardResponse&lt;Object&gt; errorResponse = StandardResponse.builder()</span>
+<span class="nc" id="L80">                .success(false)</span>
+<span class="nc" id="L81">                .message(&quot;Validation failed for input arguments&quot;)</span>
+<span class="nc" id="L82">                .data(fieldErrors)</span>
+<span class="nc" id="L83">                .timestamp(Instant.now())</span>
+<span class="nc" id="L84">                .path(request.getRequestURI())</span>
 <span class="nc" id="L85">                .build();</span>
 
 <span class="nc" id="L87">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</span>
     }
 
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
-    public ResponseEntity&lt;ErrorResponse&gt; handleConstraintViolation(jakarta.validation.ConstraintViolationException ex, HttpServletRequest request) {
-<span class="nc" id="L92">        ErrorResponse errorResponse = ErrorResponse.builder()</span>
-<span class="nc" id="L93">                .timestamp(Instant.now())</span>
-<span class="nc" id="L94">                .status(HttpStatus.BAD_REQUEST.value())</span>
-<span class="nc" id="L95">                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())</span>
-<span class="nc" id="L96">                .message(ex.getMessage())</span>
+    public ResponseEntity&lt;StandardResponse&lt;Object&gt;&gt; handleConstraintViolation(jakarta.validation.ConstraintViolationException ex, HttpServletRequest request) {
+<span class="nc" id="L92">        StandardResponse&lt;Object&gt; errorResponse = StandardResponse.builder()</span>
+<span class="nc" id="L93">                .success(false)</span>
+<span class="nc" id="L94">                .message(ex.getMessage())</span>
+<span class="nc" id="L95">                .data(null)</span>
+<span class="nc" id="L96">                .timestamp(Instant.now())</span>
 <span class="nc" id="L97">                .path(request.getRequestURI())</span>
 <span class="nc" id="L98">                .build();</span>
 <span class="nc" id="L99">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</span>
     }
 
     @ExceptionHandler(org.springframework.web.method.annotation.HandlerMethodValidationException.class)
-    public ResponseEntity&lt;ErrorResponse&gt; handleMethodValidation(org.springframework.web.method.annotation.HandlerMethodValidationException ex, HttpServletRequest request) {
-<span class="nc" id="L104">        ErrorResponse errorResponse = ErrorResponse.builder()</span>
-<span class="nc" id="L105">                .timestamp(Instant.now())</span>
-<span class="nc" id="L106">                .status(HttpStatus.BAD_REQUEST.value())</span>
-<span class="nc" id="L107">                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())</span>
-<span class="nc" id="L108">                .message(&quot;Validation failed: &quot; + ex.getMessage())</span>
+    public ResponseEntity&lt;StandardResponse&lt;Object&gt;&gt; handleMethodValidation(org.springframework.web.method.annotation.HandlerMethodValidationException ex, HttpServletRequest request) {
+<span class="nc" id="L104">        StandardResponse&lt;Object&gt; errorResponse = StandardResponse.builder()</span>
+<span class="nc" id="L105">                .success(false)</span>
+<span class="nc" id="L106">                .message(&quot;Validation failed: &quot; + ex.getMessage())</span>
+<span class="nc" id="L107">                .data(null)</span>
+<span class="nc" id="L108">                .timestamp(Instant.now())</span>
 <span class="nc" id="L109">                .path(request.getRequestURI())</span>
 <span class="nc" id="L110">                .build();</span>
 <span class="nc" id="L111">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);</span>
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity&lt;ErrorResponse&gt; handleGenericException(Exception ex, HttpServletRequest request) {
-<span class="nc" id="L116">        ErrorResponse errorResponse = ErrorResponse.builder()</span>
-<span class="nc" id="L117">                .timestamp(Instant.now())</span>
-<span class="nc" id="L118">                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())</span>
-<span class="nc" id="L119">                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())</span>
-<span class="nc bnc" id="L120" title="All 2 branches missed.">                .message(ex.getMessage() != null ? ex.getMessage() : &quot;An unexpected server error occurred&quot;)</span>
+    public ResponseEntity&lt;StandardResponse&lt;Object&gt;&gt; handleGenericException(Exception ex, HttpServletRequest request) {
+<span class="nc" id="L116">        StandardResponse&lt;Object&gt; errorResponse = StandardResponse.builder()</span>
+<span class="nc" id="L117">                .success(false)</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                .message(ex.getMessage() != null ? ex.getMessage() : &quot;An unexpected server error occurred&quot;)</span>
+<span class="nc" id="L119">                .data(null)</span>
+<span class="nc" id="L120">                .timestamp(Instant.now())</span>
 <span class="nc" id="L121">                .path(request.getRequestURI())</span>
 <span class="nc" id="L122">                .build();</span>
 <span class="nc" id="L123">        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);</span>

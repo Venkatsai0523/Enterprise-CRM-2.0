@@ -1,7 +1,6 @@
 package com.crm.common;
 
 import com.crm.common.exception.BadRequestException;
-import com.crm.common.exception.ErrorResponse;
 import com.crm.common.exception.GlobalExceptionHandler;
 import com.crm.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,13 +28,13 @@ class GlobalExceptionHandlerTest {
     @DisplayName("Exception Handler: BadRequestException returns HTTP 400 ErrorResponse")
     void handleBadRequestException() {
         BadRequestException ex = new BadRequestException("Invalid input provided");
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleBadRequest(ex, request);
+        ResponseEntity<com.crm.common.response.StandardResponse<Object>> response = exceptionHandler.handleBadRequest(ex, request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        ErrorResponse body = response.getBody();
+        com.crm.common.response.StandardResponse<Object> body = response.getBody();
         assertThat(body).isNotNull();
         if (body != null) {
-            assertThat(body.getStatus()).isEqualTo(400);
+            assertThat(body.isSuccess()).isFalse();
             assertThat(body.getMessage()).isEqualTo("Invalid input provided");
             assertThat(body.getPath()).isEqualTo("/api/test");
         }
@@ -45,13 +44,13 @@ class GlobalExceptionHandlerTest {
     @DisplayName("Exception Handler: ResourceNotFoundException returns HTTP 404 ErrorResponse")
     void handleResourceNotFoundException() {
         ResourceNotFoundException ex = new ResourceNotFoundException("Lead not found");
-        ResponseEntity<ErrorResponse> response = exceptionHandler.handleResourceNotFound(ex, request);
+        ResponseEntity<com.crm.common.response.StandardResponse<Object>> response = exceptionHandler.handleResourceNotFound(ex, request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        ErrorResponse body = response.getBody();
+        com.crm.common.response.StandardResponse<Object> body = response.getBody();
         assertThat(body).isNotNull();
         if (body != null) {
-            assertThat(body.getStatus()).isEqualTo(404);
+            assertThat(body.isSuccess()).isFalse();
             assertThat(body.getMessage()).isEqualTo("Lead not found");
             assertThat(body.getPath()).isEqualTo("/api/test");
         }

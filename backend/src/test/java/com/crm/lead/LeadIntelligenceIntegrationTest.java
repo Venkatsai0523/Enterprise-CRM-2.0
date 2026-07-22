@@ -88,12 +88,13 @@ class LeadIntelligenceIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("SCORED"))
-                .andExpect(jsonPath("$.score").value(100)) // 40 (REFERRAL) + 30 (>500) + 30 (corporate email) = 100
+                .andExpect(jsonPath("$.data.status").value("SCORED"))
+                .andExpect(jsonPath("$.data.score").value(100)) // 40 (REFERRAL) + 30 (>500) + 30 (corporate email) = 100
                 .andReturn();
 
-        LeadResponseDto createdLead = objectMapper.readValue(result.getResponse().getContentAsString(), LeadResponseDto.class);
-        UUID leadId = createdLead.getId();
+        String responseString = result.getResponse().getContentAsString();
+        String leadIdStr = com.jayway.jsonpath.JsonPath.read(responseString, "$.data.id");
+        UUID leadId = UUID.fromString(leadIdStr);
 
         // 2. Await Async Kafka Consumer (LeadScoredEventConsumer) to process auto-assignment
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -125,6 +126,6 @@ class LeadIntelligenceIntegrationTest {
         mockMvc.perform(get("/api/leads")
                         .param("minScore", "0"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray());
+                .andExpect(jsonPath("$.data.content").isArray());
     }
 }

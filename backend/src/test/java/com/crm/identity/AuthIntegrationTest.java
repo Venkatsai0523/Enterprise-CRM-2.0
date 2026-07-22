@@ -1,6 +1,5 @@
 package com.crm.identity;
 
-import com.crm.identity.api.dto.JwtResponseDto;
 import com.crm.identity.api.dto.LoginRequestDto;
 import com.crm.identity.api.dto.UserRegistrationDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,8 +46,8 @@ class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(adminReg)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value("admin-test@nexus.com"))
-                .andExpect(jsonPath("$.roles[0]").value("ROLE_ADMIN"));
+                .andExpect(jsonPath("$.data.email").value("admin-test@nexus.com"))
+                .andExpect(jsonPath("$.data.roles[0]").value("ROLE_ADMIN"));
 
         // 2. Register Sales Rep User
         UserRegistrationDto repReg = UserRegistrationDto.builder()
@@ -74,10 +73,10 @@ class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(adminLogin)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.data.token").exists())
                 .andReturn();
 
-        String adminToken = objectMapper.readValue(adminLoginResult.getResponse().getContentAsString(), JwtResponseDto.class).getToken();
+        String adminToken = com.jayway.jsonpath.JsonPath.read(adminLoginResult.getResponse().getContentAsString(), "$.data.token");
 
         // 4. Login Sales Rep to get JWT token
         LoginRequestDto repLogin = LoginRequestDto.builder()
@@ -89,10 +88,10 @@ class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(repLogin)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.data.token").exists())
                 .andReturn();
 
-        String repToken = objectMapper.readValue(repLoginResult.getResponse().getContentAsString(), JwtResponseDto.class).getToken();
+        String repToken = com.jayway.jsonpath.JsonPath.read(repLoginResult.getResponse().getContentAsString(), "$.data.token");
 
         // 5. Unauthenticated request to protected endpoint -> 401 Unauthorized
         mockMvc.perform(get("/api/test/admin"))
@@ -102,19 +101,19 @@ class AuthIntegrationTest {
         mockMvc.perform(get("/api/test/admin")
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Welcome Admin! Access granted."));
+                .andExpect(jsonPath("$.data.message").value("Welcome Admin! Access granted."));
 
         // 7. Sales Rep accesses Admin endpoint -> 403 Forbidden
         mockMvc.perform(get("/api/test/admin")
                         .header("Authorization", "Bearer " + repToken))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.status").value(403))
-                .andExpect(jsonPath("$.error").value("Forbidden"));
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Access denied: You do not have permission to access this resource"));
 
         // 8. Sales Rep accesses Sales Rep endpoint -> 200 OK
         mockMvc.perform(get("/api/test/sales-rep")
                         .header("Authorization", "Bearer " + repToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Welcome Sales Representative! Access granted."));
+                .andExpect(jsonPath("$.data.message").value("Welcome Sales Representative! Access granted."));
     }
 }

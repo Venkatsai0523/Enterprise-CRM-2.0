@@ -66,14 +66,14 @@ class AuditLogIntegrationTest {
         mockMvc.perform(get("/api/audit-logs")
                         .param("entityName", "LEAD"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].entityName").value("LEAD"));
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content[0].entityName").value("LEAD"));
 
         // 4. Query GET /api/audit-logs?entityName=OPPORTUNITY
         mockMvc.perform(get("/api/audit-logs")
                         .param("entityName", "OPPORTUNITY"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].entityName").value("OPPORTUNITY"));
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content[0].entityName").value("OPPORTUNITY"));
     }
 }

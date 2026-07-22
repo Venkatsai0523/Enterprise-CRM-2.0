@@ -5,11 +5,11 @@ import com.crm.identity.api.dto.LoginRequestDto;
 import com.crm.identity.api.dto.UserRegistrationDto;
 import com.crm.identity.service.AuthService;
 import com.crm.lead.api.dto.LeadCreateDto;
-import com.crm.lead.api.dto.LeadResponseDto;
 import com.crm.organization.api.OrganizationApi;
 import com.crm.organization.api.dto.OrganizationCreateDto;
 import com.crm.organization.api.dto.OrganizationResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,26 +109,27 @@ class MultiTenancyIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(leadPayloadA))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstName").value("Peter"))
+                .andExpect(jsonPath("$.data.firstName").value("Peter"))
                 .andReturn().getResponse().getContentAsString();
 
-        LeadResponseDto createdLeadA = objectMapper.readValue(leadResponseString, LeadResponseDto.class);
+        String leadIdStr = com.jayway.jsonpath.JsonPath.read(leadResponseString, "$.data.id");
+        UUID createdLeadAId = UUID.fromString(leadIdStr);
 
         // 5. Query Leads with User A token -> should find the lead
         mockMvc.perform(get("/api/leads")
                         .header("Authorization", tokenA))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isNotEmpty())
-                .andExpect(jsonPath("$.content[0].firstName").value("Peter"));
+                .andExpect(jsonPath("$.data.content").isNotEmpty())
+                .andExpect(jsonPath("$.data.content[0].firstName").value("Peter"));
 
         // 6. Query Leads with User B token -> should NOT see the lead from Tenant A
         mockMvc.perform(get("/api/leads")
                         .header("Authorization", tokenB))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isEmpty());
+                .andExpect(jsonPath("$.data.content").isEmpty());
 
         // 7. Attempt to query Tenant A's lead by ID with User B token -> should return 404 (ResourceNotFoundException)
-        mockMvc.perform(get("/api/leads/" + createdLeadA.getId())
+        mockMvc.perform(get("/api/leads/" + createdLeadAId)
                         .header("Authorization", tokenB))
                 .andExpect(status().isNotFound());
     }

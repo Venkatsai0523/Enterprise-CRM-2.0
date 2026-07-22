@@ -179,13 +179,13 @@ class AnalyticsIntegrationTest {
         mockMvc.perform(get("/api/analytics/dashboard")
                         .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalLeads").value(2))
-                .andExpect(jsonPath("$.leadConversionRate").value(50.0)) // 1 converted of 2 leads
-                .andExpect(jsonPath("$.totalPipelineValue").value(60000.00)) // opp1 (10000) + opp2 (50000)
-                .andExpect(jsonPath("$.activePipelineValue").value(50000.00)) // opp2 (50000) is active, opp1 (10000) is WON
-                .andExpect(jsonPath("$.dealWinRate").value(100.0)) // 1 won deal of 1 closed deal
-                .andExpect(jsonPath("$.openTasks").value(2)) // 2 tasks
-                .andExpect(jsonPath("$.overdueTasks").value(1)); // 1 overdue task
+                .andExpect(jsonPath("$.data.totalLeads").value(2))
+                .andExpect(jsonPath("$.data.leadConversionRate").value(50.0)) // 1 converted of 2 leads
+                .andExpect(jsonPath("$.data.totalPipelineValue").value(60000.00)) // opp1 (10000) + opp2 (50000)
+                .andExpect(jsonPath("$.data.activePipelineValue").value(50000.00)) // opp2 (50000) is active, opp1 (10000) is WON
+                .andExpect(jsonPath("$.data.dealWinRate").value(100.0)) // 1 won deal of 1 closed deal
+                .andExpect(jsonPath("$.data.openTasks").value(2)) // 2 tasks
+                .andExpect(jsonPath("$.data.overdueTasks").value(1)); // 1 overdue task
 
         // Verify that the dashboard response was cached in Redis
         String cachedValue = redisTemplate.opsForValue().get(cacheKey);
@@ -201,7 +201,7 @@ class AnalyticsIntegrationTest {
         mockMvc.perform(get("/api/analytics/dashboard")
                         .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalLeads").value(99)) // Serves the mocked value from Redis!
-                .andExpect(jsonPath("$.totalPipelineValue").value(60000.00));
+                .andExpect(jsonPath("$.data.totalLeads").value(99)) // Serves the mocked value from Redis!
+                .andExpect(jsonPath("$.data.totalPipelineValue").value(60000.00));
     }
 }

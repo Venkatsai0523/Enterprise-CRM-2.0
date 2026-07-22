@@ -75,12 +75,13 @@ class OpportunityPipelineIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.stage").value("PROSPECTING"))
-                .andExpect(jsonPath("$.estimatedValue").value(50000.00))
+                .andExpect(jsonPath("$.data.stage").value("PROSPECTING"))
+                .andExpect(jsonPath("$.data.estimatedValue").value(50000.00))
                 .andReturn();
 
-        OpportunityResponseDto opp = objectMapper.readValue(createResult.getResponse().getContentAsString(), OpportunityResponseDto.class);
-        UUID oppId = opp.getId();
+        String responseString = createResult.getResponse().getContentAsString();
+        String oppIdStr = com.jayway.jsonpath.JsonPath.read(responseString, "$.data.id");
+        UUID oppId = UUID.fromString(oppIdStr);
 
         // 2. Transition PROSPECTING -> PROPOSAL
         mockMvc.perform(patch("/api/opportunities/" + oppId + "/stage")
@@ -89,7 +90,7 @@ class OpportunityPipelineIntegrationTest {
                                 .stage(OpportunityStage.PROPOSAL)
                                 .build())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stage").value("PROPOSAL"));
+                .andExpect(jsonPath("$.data.stage").value("PROPOSAL"));
 
         // 3. Transition PROPOSAL -> NEGOTIATION
         mockMvc.perform(patch("/api/opportunities/" + oppId + "/stage")
@@ -98,7 +99,7 @@ class OpportunityPipelineIntegrationTest {
                                 .stage(OpportunityStage.NEGOTIATION)
                                 .build())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stage").value("NEGOTIATION"));
+                .andExpect(jsonPath("$.data.stage").value("NEGOTIATION"));
 
         // 4. Transition NEGOTIATION -> WON
         mockMvc.perform(patch("/api/opportunities/" + oppId + "/stage")
@@ -107,8 +108,8 @@ class OpportunityPipelineIntegrationTest {
                                 .stage(OpportunityStage.WON)
                                 .build())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stage").value("WON"))
-                .andExpect(jsonPath("$.closedAt").exists());
+                .andExpect(jsonPath("$.data.stage").value("WON"))
+                .andExpect(jsonPath("$.data.closedAt").exists());
 
         // 5. Attempt Invalid Transition: WON -> PROSPECTING -> HTTP 400 Bad Request
         mockMvc.perform(patch("/api/opportunities/" + oppId + "/stage")
@@ -117,8 +118,7 @@ class OpportunityPipelineIntegrationTest {
                                 .stage(OpportunityStage.PROSPECTING)
                                 .build())))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.error").value("Bad Request"));
+                .andExpect(jsonPath("$.success").value(false));
     }
 
     @Test
@@ -144,8 +144,10 @@ class OpportunityPipelineIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
+        String responseString = result.getResponse().getContentAsString();
+        String dataJson = objectMapper.writeValueAsString(com.jayway.jsonpath.JsonPath.read(responseString, "$.data"));
         List<LostAnalysisDto> lostReport = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
+                dataJson,
                 objectMapper.getTypeFactory().constructCollectionType(List.class, LostAnalysisDto.class)
         );
 

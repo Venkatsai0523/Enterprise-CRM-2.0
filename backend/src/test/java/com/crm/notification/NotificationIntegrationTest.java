@@ -68,17 +68,17 @@ class NotificationIntegrationTest {
         MvcResult getResult = mockMvc.perform(get("/api/notifications")
                         .param("recipientId", repId.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].type").value("LEAD_ASSIGNED"))
-                .andExpect(jsonPath("$.content[0].read").value(false))
+                .andExpect(jsonPath("$.data.content[0].type").value("LEAD_ASSIGNED"))
+                .andExpect(jsonPath("$.data.content[0].read").value(false))
                 .andReturn();
 
         String contentString = getResult.getResponse().getContentAsString();
         UUID notificationId = UUID.fromString(objectMapper.readTree(contentString)
-                .get("content").get(0).get("id").asText());
+                .get("data").get("content").get(0).get("id").asText());
 
         // 4. Mark notification as read PATCH /api/notifications/{id}/read
         mockMvc.perform(patch("/api/notifications/" + notificationId + "/read"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.read").value(true));
+                .andExpect(jsonPath("$.data.read").value(true));
     }
 }

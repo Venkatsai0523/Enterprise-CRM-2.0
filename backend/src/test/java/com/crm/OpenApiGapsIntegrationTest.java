@@ -5,7 +5,6 @@ import com.crm.identity.api.dto.LoginRequestDto;
 import com.crm.identity.api.dto.UserRegistrationDto;
 import com.crm.identity.service.AuthService;
 import com.crm.lead.api.dto.LeadCreateDto;
-import com.crm.lead.api.dto.LeadResponseDto;
 import com.crm.organization.api.OrganizationApi;
 import com.crm.organization.api.dto.OrganizationCreateDto;
 import com.crm.organization.api.dto.OrganizationResponseDto;
@@ -60,8 +59,8 @@ class OpenApiGapsIntegrationTest {
         mockMvc.perform(get("/api/organizations/lookup")
                         .param("subdomain", subdomain))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(org.getId().toString()))
-                .andExpect(jsonPath("$.name").value("Gap Testing Org"));
+                .andExpect(jsonPath("$.data.id").value(org.getId().toString()))
+                .andExpect(jsonPath("$.data.name").value("Gap Testing Org"));
 
         // ==========================================
         // 2. Setup Registered User and Get JWT
@@ -90,8 +89,8 @@ class OpenApiGapsIntegrationTest {
         mockMvc.perform(get("/api/users/me")
                         .header("Authorization", jwt))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(email))
-                .andExpect(jsonPath("$.firstName").value("Alice"));
+                .andExpect(jsonPath("$.data.email").value(email))
+                .andExpect(jsonPath("$.data.firstName").value("Alice"));
 
         // ==========================================
         // 4. Test Pagination Cap (Max 100 size limit)
@@ -141,8 +140,8 @@ class OpenApiGapsIntegrationTest {
         // ==========================================
         // 6. Test Soft Deletes (Delete and exclusion)
         // ==========================================
-        LeadResponseDto createdLead = objectMapper.readValue(firstResponse, LeadResponseDto.class);
-        UUID leadId = createdLead.getId();
+        String leadIdStr = com.jayway.jsonpath.JsonPath.read(firstResponse, "$.data.id");
+        UUID leadId = UUID.fromString(leadIdStr);
 
         // Lead exists
         mockMvc.perform(get("/api/leads/" + leadId)

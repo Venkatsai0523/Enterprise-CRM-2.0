@@ -1,5 +1,6 @@
 package com.crm.common.exception;
 
+import com.crm.common.response.StandardResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,55 +18,55 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.NOT_FOUND.value())
-                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+    public ResponseEntity<StandardResponse<Object>> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+        StandardResponse<Object> errorResponse = StandardResponse.builder()
+                .success(false)
                 .message(ex.getMessage())
+                .data(null)
+                .timestamp(Instant.now())
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+    public ResponseEntity<StandardResponse<Object>> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
+        StandardResponse<Object> errorResponse = StandardResponse.builder()
+                .success(false)
                 .message(ex.getMessage())
+                .data(null)
+                .timestamp(Instant.now())
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+    public ResponseEntity<StandardResponse<Object>> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
+        StandardResponse<Object> errorResponse = StandardResponse.builder()
+                .success(false)
                 .message("Invalid email or password")
+                .data(null)
+                .timestamp(Instant.now())
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.FORBIDDEN.value())
-                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+    public ResponseEntity<StandardResponse<Object>> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+        StandardResponse<Object> errorResponse = StandardResponse.builder()
+                .success(false)
                 .message("Access denied: You do not have permission to access this resource")
+                .data(null)
+                .timestamp(Instant.now())
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    public ResponseEntity<StandardResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
         List<ErrorResponse.FieldErrorDetail> fieldErrors = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
@@ -75,49 +76,48 @@ public class GlobalExceptionHandler {
                 })
                 .toList();
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+        StandardResponse<Object> errorResponse = StandardResponse.builder()
+                .success(false)
                 .message("Validation failed for input arguments")
+                .data(fieldErrors)
+                .timestamp(Instant.now())
                 .path(request.getRequestURI())
-                .validationErrors(fieldErrors)
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolation(jakarta.validation.ConstraintViolationException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+    public ResponseEntity<StandardResponse<Object>> handleConstraintViolation(jakarta.validation.ConstraintViolationException ex, HttpServletRequest request) {
+        StandardResponse<Object> errorResponse = StandardResponse.builder()
+                .success(false)
                 .message(ex.getMessage())
+                .data(null)
+                .timestamp(Instant.now())
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(org.springframework.web.method.annotation.HandlerMethodValidationException.class)
-    public ResponseEntity<ErrorResponse> handleMethodValidation(org.springframework.web.method.annotation.HandlerMethodValidationException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+    public ResponseEntity<StandardResponse<Object>> handleMethodValidation(org.springframework.web.method.annotation.HandlerMethodValidationException ex, HttpServletRequest request) {
+        StandardResponse<Object> errorResponse = StandardResponse.builder()
+                .success(false)
                 .message("Validation failed: " + ex.getMessage())
+                .data(null)
+                .timestamp(Instant.now())
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+    public ResponseEntity<StandardResponse<Object>> handleGenericException(Exception ex, HttpServletRequest request) {
+        StandardResponse<Object> errorResponse = StandardResponse.builder()
+                .success(false)
                 .message(ex.getMessage() != null ? ex.getMessage() : "An unexpected server error occurred")
+                .data(null)
+                .timestamp(Instant.now())
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);

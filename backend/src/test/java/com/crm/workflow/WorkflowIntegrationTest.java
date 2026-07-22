@@ -123,7 +123,7 @@ class WorkflowIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(ruleDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("High Value Lead Alert"));
+                .andExpect(jsonPath("$.data.name").value("High Value Lead Alert"));
 
         // 3. Simulate Lead Scoring Event and check rules engine evaluation (direct API call)
         UUID leadId = lead.getId();

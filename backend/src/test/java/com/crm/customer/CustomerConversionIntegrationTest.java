@@ -115,8 +115,8 @@ class CustomerConversionIntegrationTest {
         // 7. Verify HTTP GET /api/customers/{id} 360 View
         mockMvc.perform(get("/api/customers/" + accountId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.domainName").value("stark-industries.com"))
-                .andExpect(jsonPath("$.opportunityCount").value(2))
-                .andExpect(jsonPath("$.totalLifetimeValue").value(175000.00));
+                .andExpect(jsonPath("$.data.domainName").value("stark-industries.com"))
+                .andExpect(jsonPath("$.data.opportunityCount").value(2))
+                .andExpect(jsonPath("$.data.totalLifetimeValue").value(175000.00));
     }
 }

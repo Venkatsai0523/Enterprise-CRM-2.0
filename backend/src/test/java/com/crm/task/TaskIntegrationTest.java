@@ -126,16 +126,17 @@ class TaskIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.title").value("Initial Discovery Call"))
-                .andExpect(jsonPath("$.status").value("TODO"))
-                .andExpect(jsonPath("$.priority").value("HIGH"))
-                .andExpect(jsonPath("$.type").value("CALL"))
-                .andExpect(jsonPath("$.assignedTo").value(repId.toString()))
+                .andExpect(jsonPath("$.data.id").exists())
+                .andExpect(jsonPath("$.data.title").value("Initial Discovery Call"))
+                .andExpect(jsonPath("$.data.status").value("TODO"))
+                .andExpect(jsonPath("$.data.priority").value("HIGH"))
+                .andExpect(jsonPath("$.data.type").value("CALL"))
+                .andExpect(jsonPath("$.data.assignedTo").value(repId.toString()))
                 .andReturn();
 
-        TaskResponseDto task = objectMapper.readValue(createResult.getResponse().getContentAsString(), TaskResponseDto.class);
-        UUID taskId = task.getId();
+        String responseString = createResult.getResponse().getContentAsString();
+        String taskIdStr = com.jayway.jsonpath.JsonPath.read(responseString, "$.data.id");
+        UUID taskId = UUID.fromString(taskIdStr);
 
         // 2. Await Async notification generation (TaskAssignedEvent Consumer)
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -150,7 +151,7 @@ class TaskIntegrationTest {
         mockMvc.perform(patch("/api/tasks/" + taskId + "/status")
                         .param("status", "COMPLETED"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("COMPLETED"));
+                .andExpect(jsonPath("$.data.status").value("COMPLETED"));
 
         // 4. Verify that Audit Log is recorded for the task status change
         mockMvc.perform(get("/api/audit-logs")
@@ -158,8 +159,8 @@ class TaskIntegrationTest {
                         .param("entityId", taskId.toString())
                         .param("action", "STATUS_CHANGE"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].oldState").value("TODO"))
-                .andExpect(jsonPath("$.content[0].newState").value("COMPLETED"));
+                .andExpect(jsonPath("$.data.content[0].oldState").value("TODO"))
+                .andExpect(jsonPath("$.data.content[0].newState").value("COMPLETED"));
 
         // 5. Test Customer 360 view integration
         // Convert the lead into an opportunity and win it to generate a customer account
@@ -204,10 +205,12 @@ class TaskIntegrationTest {
         // Fetch Customer 360 profile and verify activity history is populated
         MvcResult customer360Result = mockMvc.perform(get("/api/customers/" + customer.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.activities").isArray())
+                .andExpect(jsonPath("$.data.activities").isArray())
                 .andReturn();
 
-        Customer360ResponseDto customer360 = objectMapper.readValue(customer360Result.getResponse().getContentAsString(), Customer360ResponseDto.class);
+        String customer360ResponseString = customer360Result.getResponse().getContentAsString();
+        String customer360Data = objectMapper.writeValueAsString(com.jayway.jsonpath.JsonPath.read(customer360ResponseString, "$.data"));
+        Customer360ResponseDto customer360 = objectMapper.readValue(customer360Data, Customer360ResponseDto.class);
         assertThat(customer360.getActivities()).isNotEmpty();
         assertThat(customer360.getActivities().get(0).getTitle()).isEqualTo("Follow-up meeting after signing");
     }
