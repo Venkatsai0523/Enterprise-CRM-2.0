@@ -45,40 +45,31 @@ class MultiTenancyIntegrationTest {
     @Test
     @DisplayName("Complete Multi-Tenancy Data Isolation Test")
     void verifyDataIsolationBetweenTenants() throws Exception {
-        // 1. Create Organization A and Organization B
-        // Note: Creating organization requires ROLE_ADMIN. We can create them programmatically using organizationApi.
-        OrganizationResponseDto orgA = organizationApi.createOrganization(OrganizationCreateDto.builder()
-                .name("Stark Enterprises")
+        // 2. Register User A and User B — each creates their own organization
+        authService.register(UserRegistrationDto.builder()
+                .email("tony@stark.com")
+                .password("ironman123")
+                .firstName("Tony")
+                .lastName("Stark")
+                .roleName("ROLE_ADMIN")
+                .organizationName("Stark Enterprises")
                 .subdomain("stark")
                 .build());
 
-        OrganizationResponseDto orgB = organizationApi.createOrganization(OrganizationCreateDto.builder()
-                .name("Oscorp Industries")
+        authService.register(UserRegistrationDto.builder()
+                .email("norman@oscorp.com")
+                .password("goblin123")
+                .firstName("Norman")
+                .lastName("Osborn")
+                .roleName("ROLE_ADMIN")
+                .organizationName("Oscorp Industries")
                 .subdomain("oscorp")
                 .build());
 
-        // 2. Register User A (Org A) and User B (Org B)
-        com.crm.infrastructure.tenant.TenantContext.computeInTenantContext(orgA.getId(), () ->
-            authService.register(UserRegistrationDto.builder()
-                    .email("tony@stark.com")
-                    .password("ironman123")
-                    .firstName("Tony")
-                    .lastName("Stark")
-                    .roleName("ROLE_ADMIN")
-                    .organizationId(orgA.getId())
-                    .build())
-        );
-
-        com.crm.infrastructure.tenant.TenantContext.computeInTenantContext(orgB.getId(), () ->
-            authService.register(UserRegistrationDto.builder()
-                    .email("norman@oscorp.com")
-                    .password("goblin123")
-                    .firstName("Norman")
-                    .lastName("Osborn")
-                    .roleName("ROLE_ADMIN")
-                    .organizationId(orgB.getId())
-                    .build())
-        );
+        OrganizationResponseDto orgA = organizationApi.findOrganizationBySubdomain("stark")
+                .orElseThrow(() -> new RuntimeException("Org A not found"));
+        OrganizationResponseDto orgB = organizationApi.findOrganizationBySubdomain("oscorp")
+                .orElseThrow(() -> new RuntimeException("Org B not found"));
 
         // 3. Authenticate User A and User B to obtain JWTs
         JwtResponseDto loginA = authService.login(LoginRequestDto.builder()

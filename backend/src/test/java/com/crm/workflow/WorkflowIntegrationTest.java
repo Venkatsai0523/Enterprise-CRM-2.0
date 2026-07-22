@@ -67,22 +67,19 @@ class WorkflowIntegrationTest {
     @Test
     @DisplayName("Workflow Rules Engine E2E Execution Test")
     void testWorkflowRulesEngineExecution() throws Exception {
-        // 1. Create Organization & Admin User
-        OrganizationResponseDto org = organizationApi.createOrganization(OrganizationCreateDto.builder()
-                .name("Workflow Inc")
+        // 1. Create Organization & Admin User — register creates the org automatically
+        authService.register(UserRegistrationDto.builder()
+                .email("admin@workflow.com")
+                .password("adminpass")
+                .firstName("Admin")
+                .lastName("Workflow")
+                .roleName("ROLE_ADMIN")
+                .organizationName("Workflow Inc")
                 .subdomain("workflow")
                 .build());
 
-        com.crm.infrastructure.tenant.TenantContext.computeInTenantContext(org.getId(), () ->
-            authService.register(UserRegistrationDto.builder()
-                    .email("admin@workflow.com")
-                    .password("adminpass")
-                    .firstName("Admin")
-                    .lastName("Workflow")
-                    .roleName("ROLE_ADMIN")
-                    .organizationId(org.getId())
-                    .build())
-        );
+        OrganizationResponseDto org = organizationApi.findOrganizationBySubdomain("workflow")
+                .orElseThrow(() -> new RuntimeException("Org not found"));
 
         JwtResponseDto login = authService.login(LoginRequestDto.builder()
                 .email("admin@workflow.com")

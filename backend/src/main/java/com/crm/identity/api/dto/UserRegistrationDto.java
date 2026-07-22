@@ -2,6 +2,7 @@ package com.crm.identity.api.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,5 +31,13 @@ public class UserRegistrationDto {
 
     private String roleName; // e.g., ROLE_SALES_REP or ROLE_ADMIN
 
-    private java.util.UUID organizationId;
+    @NotBlank(message = "Organization name is required")
+    private String organizationName;
+
+    /**
+     * URL-safe subdomain for the organization (e.g. "acme-corp").
+     * Auto-derived from organizationName if not provided.
+     */
+    @Pattern(regexp = "^[a-z0-9-]*$", message = "Subdomain must be lowercase letters, digits or hyphens only")
+    private String subdomain;
 }

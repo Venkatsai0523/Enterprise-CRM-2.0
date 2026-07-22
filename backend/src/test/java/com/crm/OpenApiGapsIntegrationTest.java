@@ -48,34 +48,31 @@ class OpenApiGapsIntegrationTest {
     @DisplayName("Verify Subdomain Lookup, Profile Retrieval, Pagination Caps, Idempotency, and Soft Deletes")
     void testOpenApiGaps() throws Exception {
         // ==========================================
-        // 1. Test Subdomain Lookup (Public, Pre-auth)
+        // 1. Register user — this also creates the org with a unique subdomain
         // ==========================================
-        String subdomain = "test-subdomain-" + UUID.randomUUID();
-        OrganizationResponseDto org = organizationApi.createOrganization(OrganizationCreateDto.builder()
-                .name("Gap Testing Org")
+        String subdomain = "test-subdomain-" + UUID.randomUUID().toString().substring(0, 8);
+        String email = "test-user-" + UUID.randomUUID() + "@gaptest.com";
+        authService.register(UserRegistrationDto.builder()
+                .email(email)
+                .password("password123")
+                .firstName("Alice")
+                .lastName("Tester")
+                .roleName("ROLE_ADMIN")
+                .organizationName("Gap Testing Org")
                 .subdomain(subdomain)
                 .build());
 
+        OrganizationResponseDto org = organizationApi.findOrganizationBySubdomain(subdomain)
+                .orElseThrow(() -> new RuntimeException("Org not found"));
+
+        // ==========================================
+        // 2. Test Subdomain Lookup (Public, Pre-auth)
+        // ==========================================
         mockMvc.perform(get("/api/organizations/lookup")
                         .param("subdomain", subdomain))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(org.getId().toString()))
                 .andExpect(jsonPath("$.data.name").value("Gap Testing Org"));
-
-        // ==========================================
-        // 2. Setup Registered User and Get JWT
-        // ==========================================
-        String email = "test-user-" + UUID.randomUUID() + "@gaptest.com";
-        com.crm.infrastructure.tenant.TenantContext.computeInTenantContext(org.getId(), () ->
-                authService.register(UserRegistrationDto.builder()
-                        .email(email)
-                        .password("password123")
-                        .firstName("Alice")
-                        .lastName("Tester")
-                        .roleName("ROLE_ADMIN")
-                        .organizationId(org.getId())
-                        .build())
-        );
 
         JwtResponseDto loginResponse = authService.login(LoginRequestDto.builder()
                 .email(email)

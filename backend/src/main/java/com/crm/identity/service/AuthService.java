@@ -9,6 +9,9 @@ import com.crm.identity.entity.User;
 import com.crm.identity.mapper.UserMapper;
 import com.crm.identity.repository.RoleRepository;
 import com.crm.identity.repository.UserRepository;
+import com.crm.organization.entity.Organization;
+import com.crm.organization.repository.OrganizationRepository;
+import com.crm.infrastructure.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Optional;
 import java.util.Set;
@@ -32,45 +36,77 @@ public class AuthService implements IdentityApi {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final OrganizationRepository organizationRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
     private final UserMapper userMapper;
+    private final TransactionTemplate transactionTemplate;
 
-    @Transactional
     public UserResponseDto register(UserRegistrationDto dto) {
         if (userRepository.existsByEmailBypassingTenant(dto.getEmail())) {
             throw new BadRequestException("Email is already registered: " + dto.getEmail());
         }
 
+        // --- Resolve role ---
         String targetRoleName = (dto.getRoleName() != null && !dto.getRoleName().isBlank())
                 ? dto.getRoleName()
                 : "ROLE_SALES_REP";
-
         if (!targetRoleName.startsWith("ROLE_")) {
             targetRoleName = "ROLE_" + targetRoleName;
         }
+        final String resolvedRoleName = targetRoleName;
+        Role role = roleRepository.findByName(resolvedRoleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + resolvedRoleName));
 
-        Role role = roleRepository.findByName(targetRoleName)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + dto.getRoleName()));
+        // --- Validate org name/subdomain uniqueness ---
+        String orgName = dto.getOrganizationName().trim();
+        String subdomain = (dto.getSubdomain() != null && !dto.getSubdomain().isBlank())
+                ? dto.getSubdomain().toLowerCase().trim()
+                : orgName.toLowerCase().replaceAll("\\s+", "-").replaceAll("[^a-z0-9-]", "");
 
-        UUID orgId = dto.getOrganizationId() != null 
-                ? dto.getOrganizationId() 
-                : com.crm.infrastructure.tenant.TenantContextResolver.DEFAULT_ORG_ID;
+        if (organizationRepository.existsByName(orgName)) {
+            throw new BadRequestException("Organization name already taken: " + orgName);
+        }
+        if (organizationRepository.existsBySubdomain(subdomain)) {
+            throw new BadRequestException("Subdomain already taken: " + subdomain);
+        }
 
-        User user = User.builder()
-                .email(dto.getEmail())
-                .passwordHash(passwordEncoder.encode(dto.getPassword()))
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .enabled(true)
-                .roles(Set.of(role))
-                .organizationId(orgId)
-                .build();
+        // 1. Create Organization in its own transaction
+        Organization organization = transactionTemplate.execute(status ->
+                organizationRepository.saveAndFlush(
+                        Organization.builder()
+                                .name(orgName)
+                                .subdomain(subdomain)
+                                .active(true)
+                                .build()
+                )
+        );
 
-        User savedUser = com.crm.infrastructure.tenant.TenantContext.computeInTenantContext(orgId, () -> userRepository.saveAndFlush(user));
-        return userMapper.toDto(savedUser);
+        UUID orgId = organization.getId();
+        log.info("Created organization '{}' with id={} for new user {}", orgName, orgId, dto.getEmail());
+
+        // 2. Set TenantContext to orgId BEFORE opening the User transaction
+        TenantContext.setTenantId(orgId);
+        try {
+            return transactionTemplate.execute(status -> {
+                User user = User.builder()
+                        .email(dto.getEmail())
+                        .passwordHash(passwordEncoder.encode(dto.getPassword()))
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .enabled(true)
+                        .roles(Set.of(role))
+                        .organizationId(orgId)
+                        .build();
+
+                User savedUser = userRepository.saveAndFlush(user);
+                return userMapper.toDto(savedUser);
+            });
+        } finally {
+            TenantContext.clear();
+        }
     }
 
     @Transactional(readOnly = true)

@@ -71,22 +71,19 @@ class AnalyticsIntegrationTest {
     @Test
     @DisplayName("Analytics Dashboard Calculations & Redis Caching Test")
     void testDashboardAnalyticsAndCaching() throws Exception {
-        // 1. Create Organization & User Context
-        OrganizationResponseDto org = organizationApi.createOrganization(OrganizationCreateDto.builder()
-                .name("Analytics Corp")
+            // 1. Create Organization & User Context — register creates the org automatically
+        authService.register(UserRegistrationDto.builder()
+                .email("manager@analytics.com")
+                .password("managerpass")
+                .firstName("Manager")
+                .lastName("Analytics")
+                .roleName("ROLE_MANAGER")
+                .organizationName("Analytics Corp")
                 .subdomain("analytics")
                 .build());
 
-        com.crm.infrastructure.tenant.TenantContext.computeInTenantContext(org.getId(), () ->
-            authService.register(UserRegistrationDto.builder()
-                    .email("manager@analytics.com")
-                    .password("managerpass")
-                    .firstName("Manager")
-                    .lastName("Analytics")
-                    .roleName("ROLE_MANAGER")
-                    .organizationId(org.getId())
-                    .build())
-        );
+        OrganizationResponseDto org = organizationApi.findOrganizationBySubdomain("analytics")
+                .orElseThrow(() -> new RuntimeException("Org not found"));
 
         JwtResponseDto login = authService.login(LoginRequestDto.builder()
                 .email("manager@analytics.com")

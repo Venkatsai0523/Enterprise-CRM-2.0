@@ -1,0 +1,6 @@
+{
+  "name": "NexusCRM",
+  "description": "Enterprise CRM platform featuring organization setup, overview dashboard, customer profiles, lead management, sales pipeline kanban, task agenda, user management, and real-time notifications.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

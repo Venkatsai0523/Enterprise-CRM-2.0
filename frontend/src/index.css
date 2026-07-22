@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--md-background);
+  --color-on-surface: var(--md-on-surface);
+  --color-on-surface-variant: var(--md-on-surface-variant);
+  --color-primary: var(--md-primary);
+  --color-on-primary: var(--md-on-primary);
+  --color-surface-container-low: var(--md-surface-container-low);
+  --color-surface-container-lowest: var(--md-surface-container-lowest);
+  --color-border-subtle: var(--md-border-subtle);
+  --color-error-container: var(--md-error-container);
+  --color-on-error-container: var(--md-on-error-container);
+  
+  --spacing-sidebar-width: 260px;
+}
+
+:root {
+  /* Premium M3 Light Theme */
+  --md-background: #fbf8fd;
+  --md-on-surface: #1d1b20;
+  --md-on-surface-variant: #49454f;
+  --md-primary: #004ac6;
+  --md-on-primary: #ffffff;
+  --md-surface-container-low: #f3f4f6;
+  --md-surface-container-lowest: #ffffff;
+  --md-border-subtle: #e5e7eb;
+  --md-error-container: #fee2e2;
+  --md-on-error-container: #991b1b;
+  
+  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Premium M3 Dark Theme */
+    --md-background: #0f0e13;
+    --md-on-surface: #e6e1e9;
+    --md-on-surface-variant: #9ca3af;
+    --md-primary: #3b82f6;
+    --md-on-primary: #ffffff;
+    --md-surface-container-low: #1e1b24;
+    --md-surface-container-lowest: #121016;
+    --md-border-subtle: #2d2a35;
+    --md-error-container: #7f1d1d;
+    --md-on-error-container: #fca5a5;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--md-background);
+  color: var(--md-on-surface);
+}

@@ -21,14 +21,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Register a new user", description = "Creates a new user account with BCrypt password hashing and returns user profile DTO")
     public ResponseEntity<UserResponseDto> register(@Valid @RequestBody UserRegistrationDto dto) {
-        java.util.UUID orgId = dto.getOrganizationId() != null 
-                ? dto.getOrganizationId() 
-                : com.crm.infrastructure.tenant.TenantContextResolver.DEFAULT_ORG_ID;
-
-        UserResponseDto response = com.crm.infrastructure.tenant.TenantContext.computeInTenantContext(
-                orgId, 
-                () -> authService.register(dto)
-        );
+        UserResponseDto response = authService.register(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
