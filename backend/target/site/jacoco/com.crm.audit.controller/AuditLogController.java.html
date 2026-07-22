@@ -20,16 +20,16 @@ public class AuditLogController {
 
     @GetMapping
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MANAGER')&quot;)
-    @Operation(summary = &quot;Query audit logs&quot;, description = &quot;Retrieves paginated audit log entries filtered by entity name, entity ID, and action&quot;)
+    @Operation(summary = &quot;Query audit logs&quot;, description = &quot;Retrieves paginated audit log entries filtered by entity name, entity ID, and action. Max page size: 100.&quot;)
     public ResponseEntity&lt;Page&lt;AuditLogResponseDto&gt;&gt; getAuditLogs(
             @RequestParam(required = false) String entityName,
             @RequestParam(required = false) String entityId,
             @RequestParam(required = false) String action,
             @RequestParam(defaultValue = &quot;0&quot;) int page,
-            @RequestParam(defaultValue = &quot;10&quot;) int size
+            @jakarta.validation.constraints.Max(value = 100, message = &quot;Page size must not exceed 100&quot;) @RequestParam(defaultValue = &quot;10&quot;) int size
     ) {
-<span class="fc" id="L31">        Page&lt;AuditLogResponseDto&gt; response = auditService.getAuditLogs(entityName, entityId, action, page, size);</span>
-<span class="fc" id="L32">        return ResponseEntity.ok(response);</span>
+<span class="nc" id="L31">        Page&lt;AuditLogResponseDto&gt; response = auditService.getAuditLogs(entityName, entityId, action, page, size);</span>
+<span class="nc" id="L32">        return ResponseEntity.ok(response);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

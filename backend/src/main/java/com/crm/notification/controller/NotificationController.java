@@ -22,11 +22,11 @@ public class NotificationController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')")
-    @Operation(summary = "Get user notifications", description = "Retrieves paginated notifications for a recipient ID")
+    @Operation(summary = "Get user notifications", description = "Retrieves paginated notifications for a recipient ID. Max page size: 100.")
     public ResponseEntity<Page<NotificationResponseDto>> getNotifications(
             @RequestParam UUID recipientId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @jakarta.validation.constraints.Max(value = 100, message = "Page size must not exceed 100") @RequestParam(defaultValue = "10") int size
     ) {
         Page<NotificationResponseDto> response = notificationService.getNotificationsForRecipient(recipientId, page, size);
         return ResponseEntity.ok(response);

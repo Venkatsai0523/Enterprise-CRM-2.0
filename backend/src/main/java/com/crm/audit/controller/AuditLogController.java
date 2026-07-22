@@ -20,13 +20,13 @@ public class AuditLogController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Query audit logs", description = "Retrieves paginated audit log entries filtered by entity name, entity ID, and action")
+    @Operation(summary = "Query audit logs", description = "Retrieves paginated audit log entries filtered by entity name, entity ID, and action. Max page size: 100.")
     public ResponseEntity<Page<AuditLogResponseDto>> getAuditLogs(
             @RequestParam(required = false) String entityName,
             @RequestParam(required = false) String entityId,
             @RequestParam(required = false) String action,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @jakarta.validation.constraints.Max(value = 100, message = "Page size must not exceed 100") @RequestParam(defaultValue = "10") int size
     ) {
         Page<AuditLogResponseDto> response = auditService.getAuditLogs(entityName, entityId, action, page, size);
         return ResponseEntity.ok(response);

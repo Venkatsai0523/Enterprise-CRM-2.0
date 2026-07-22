@@ -38,6 +38,7 @@ C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\IdentityApi.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\controller\AuthController.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\controller\TestProtectedController.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\controller\UserController.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\entity\Permission.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\entity\Role.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\entity\User.java
@@ -49,6 +50,7 @@ C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\service\CustomUserDetailsService.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\service\JwtService.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\config\FlywayConfig.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\idempotency\IdempotencyFilter.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\kafka\KafkaEventPublisher.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\kafka\KafkaTopicConfig.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\infrastructure\package-info.java
@@ -59,6 +61,7 @@ C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\dto\LeadCreateDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\dto\LeadResponseDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\dto\LeadStatus.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\dto\LeadUpdateDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\event\LeadAssignedEvent.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\event\LeadScoredEvent.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\lead\api\LeadApi.java
@@ -86,6 +89,7 @@ C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\OpportunityResponseDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\OpportunityStage.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\OpportunityStageUpdateDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\dto\OpportunityUpdateDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\event\DealLostEvent.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\event\DealWonEvent.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\opportunity\api\OpportunityApi.java

@@ -27,7 +27,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-<span class="fc" id="L30">@Slf4j</span>
+<span class="nc" id="L30">@Slf4j</span>
 @SuppressWarnings(&quot;null&quot;)
 public class OpportunityService implements OpportunityApi {
 
@@ -43,66 +43,66 @@ public class OpportunityService implements OpportunityApi {
 
     @Transactional
     public OpportunityResponseDto createOpportunity(OpportunityCreateDto dto) {
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if (!leadApi.findLeadById(dto.getLeadId()).isPresent()) {</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (!leadApi.findLeadById(dto.getLeadId()).isPresent()) {</span>
 <span class="nc" id="L47">            throw new ResourceNotFoundException(&quot;Associated lead not found with ID: &quot; + dto.getLeadId());</span>
         }
 
-<span class="fc" id="L50">        Opportunity opportunity = opportunityMapper.toEntity(dto);</span>
-<span class="fc" id="L51">        opportunity.setStage(OpportunityStage.PROSPECTING);</span>
+<span class="nc" id="L50">        Opportunity opportunity = opportunityMapper.toEntity(dto);</span>
+<span class="nc" id="L51">        opportunity.setStage(OpportunityStage.PROSPECTING);</span>
 
-<span class="fc" id="L53">        Opportunity savedOpportunity = opportunityRepository.save(opportunity);</span>
-<span class="fc" id="L54">        log.info(&quot;Created opportunity ID: '{}' for lead ID: '{}'&quot;, savedOpportunity.getId(), dto.getLeadId());</span>
+<span class="nc" id="L53">        Opportunity savedOpportunity = opportunityRepository.save(opportunity);</span>
+<span class="nc" id="L54">        log.info(&quot;Created opportunity ID: '{}' for lead ID: '{}'&quot;, savedOpportunity.getId(), dto.getLeadId());</span>
 
-<span class="fc" id="L56">        auditApi.recordAudit(&quot;OPPORTUNITY&quot;, savedOpportunity.getId().toString(), &quot;OPPORTUNITY_CREATED&quot;, &quot;user&quot;, null, &quot;PROSPECTING&quot;);</span>
+<span class="nc" id="L56">        auditApi.recordAudit(&quot;OPPORTUNITY&quot;, savedOpportunity.getId().toString(), &quot;OPPORTUNITY_CREATED&quot;, &quot;user&quot;, null, &quot;PROSPECTING&quot;);</span>
 
-<span class="fc" id="L58">        return opportunityMapper.toDto(savedOpportunity);</span>
+<span class="nc" id="L58">        return opportunityMapper.toDto(savedOpportunity);</span>
     }
 
     @Transactional
     public OpportunityResponseDto updateStage(UUID opportunityId, OpportunityStageUpdateDto dto) {
-<span class="fc" id="L63">        Opportunity opportunity = opportunityRepository.findById(opportunityId)</span>
-<span class="pc" id="L64">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Opportunity not found with ID: &quot; + opportunityId));</span>
+<span class="nc" id="L63">        Opportunity opportunity = opportunityRepository.findById(opportunityId)</span>
+<span class="nc" id="L64">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Opportunity not found with ID: &quot; + opportunityId));</span>
 
-<span class="fc" id="L66">        stageValidator.validateTransition(opportunity.getStage(), dto.getStage(), dto.getLostReason());</span>
+<span class="nc" id="L66">        stageValidator.validateTransition(opportunity.getStage(), dto.getStage(), dto.getLostReason());</span>
 
-<span class="fc" id="L68">        OpportunityStage oldStage = opportunity.getStage();</span>
-<span class="fc" id="L69">        opportunity.setStage(dto.getStage());</span>
+<span class="nc" id="L68">        OpportunityStage oldStage = opportunity.getStage();</span>
+<span class="nc" id="L69">        opportunity.setStage(dto.getStage());</span>
 
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (dto.getStage() == OpportunityStage.WON) {</span>
-<span class="fc" id="L72">            opportunity.setClosedAt(Instant.now());</span>
-<span class="fc" id="L73">            opportunityRepository.save(opportunity);</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (dto.getStage() == OpportunityStage.WON) {</span>
+<span class="nc" id="L72">            opportunity.setClosedAt(Instant.now());</span>
+<span class="nc" id="L73">            opportunityRepository.save(opportunity);</span>
 
-<span class="fc" id="L75">            log.info(&quot;Opportunity '{}' marked as WON!&quot;, opportunityId);</span>
-<span class="fc" id="L76">            eventPublisher.publish(TOPIC_DEAL_WON, opportunityId.toString(), DealWonEvent.builder()</span>
-<span class="fc" id="L77">                    .opportunityId(opportunity.getId())</span>
-<span class="fc" id="L78">                    .leadId(opportunity.getLeadId())</span>
-<span class="fc" id="L79">                    .title(opportunity.getTitle())</span>
-<span class="fc" id="L80">                    .amount(opportunity.getEstimatedValue())</span>
-<span class="fc" id="L81">                    .organizationId(opportunity.getOrganizationId())</span>
-<span class="fc" id="L82">                    .build());</span>
+<span class="nc" id="L75">            log.info(&quot;Opportunity '{}' marked as WON!&quot;, opportunityId);</span>
+<span class="nc" id="L76">            eventPublisher.publish(TOPIC_DEAL_WON, opportunityId.toString(), DealWonEvent.builder()</span>
+<span class="nc" id="L77">                    .opportunityId(opportunity.getId())</span>
+<span class="nc" id="L78">                    .leadId(opportunity.getLeadId())</span>
+<span class="nc" id="L79">                    .title(opportunity.getTitle())</span>
+<span class="nc" id="L80">                    .amount(opportunity.getEstimatedValue())</span>
+<span class="nc" id="L81">                    .organizationId(opportunity.getOrganizationId())</span>
+<span class="nc" id="L82">                    .build());</span>
 
-<span class="fc bfc" id="L84" title="All 2 branches covered.">        } else if (dto.getStage() == OpportunityStage.LOST) {</span>
-<span class="fc" id="L85">            opportunity.setLostReason(dto.getLostReason());</span>
-<span class="fc" id="L86">            opportunity.setClosedAt(Instant.now());</span>
-<span class="fc" id="L87">            opportunityRepository.save(opportunity);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        } else if (dto.getStage() == OpportunityStage.LOST) {</span>
+<span class="nc" id="L85">            opportunity.setLostReason(dto.getLostReason());</span>
+<span class="nc" id="L86">            opportunity.setClosedAt(Instant.now());</span>
+<span class="nc" id="L87">            opportunityRepository.save(opportunity);</span>
 
-<span class="fc" id="L89">            log.info(&quot;Opportunity '{}' marked as LOST. Reason: '{}'&quot;, opportunityId, dto.getLostReason());</span>
-<span class="fc" id="L90">            eventPublisher.publish(TOPIC_DEAL_LOST, opportunityId.toString(), DealLostEvent.builder()</span>
-<span class="fc" id="L91">                    .opportunityId(opportunity.getId())</span>
-<span class="fc" id="L92">                    .leadId(opportunity.getLeadId())</span>
-<span class="fc" id="L93">                    .title(opportunity.getTitle())</span>
-<span class="fc" id="L94">                    .amount(opportunity.getEstimatedValue())</span>
-<span class="fc" id="L95">                    .lostReason(dto.getLostReason())</span>
-<span class="fc" id="L96">                    .organizationId(opportunity.getOrganizationId())</span>
-<span class="fc" id="L97">                    .build());</span>
+<span class="nc" id="L89">            log.info(&quot;Opportunity '{}' marked as LOST. Reason: '{}'&quot;, opportunityId, dto.getLostReason());</span>
+<span class="nc" id="L90">            eventPublisher.publish(TOPIC_DEAL_LOST, opportunityId.toString(), DealLostEvent.builder()</span>
+<span class="nc" id="L91">                    .opportunityId(opportunity.getId())</span>
+<span class="nc" id="L92">                    .leadId(opportunity.getLeadId())</span>
+<span class="nc" id="L93">                    .title(opportunity.getTitle())</span>
+<span class="nc" id="L94">                    .amount(opportunity.getEstimatedValue())</span>
+<span class="nc" id="L95">                    .lostReason(dto.getLostReason())</span>
+<span class="nc" id="L96">                    .organizationId(opportunity.getOrganizationId())</span>
+<span class="nc" id="L97">                    .build());</span>
         } else {
-<span class="fc" id="L99">            opportunityRepository.save(opportunity);</span>
+<span class="nc" id="L99">            opportunityRepository.save(opportunity);</span>
         }
 
-<span class="fc" id="L102">        auditApi.recordAudit(&quot;OPPORTUNITY&quot;, opportunity.getId().toString(), &quot;STAGE_CHANGE&quot;, &quot;user&quot;, oldStage.name(), dto.getStage().name());</span>
+<span class="nc" id="L102">        auditApi.recordAudit(&quot;OPPORTUNITY&quot;, opportunity.getId().toString(), &quot;STAGE_CHANGE&quot;, &quot;user&quot;, oldStage.name(), dto.getStage().name());</span>
 
-<span class="fc" id="L104">        log.info(&quot;Opportunity '{}' stage transitioned from {} -&gt; {}&quot;, opportunityId, oldStage, dto.getStage());</span>
-<span class="fc" id="L105">        return opportunityMapper.toDto(opportunity);</span>
+<span class="nc" id="L104">        log.info(&quot;Opportunity '{}' stage transitioned from {} -&gt; {}&quot;, opportunityId, oldStage, dto.getStage());</span>
+<span class="nc" id="L105">        return opportunityMapper.toDto(opportunity);</span>
     }
 
     @Transactional(readOnly = true)
@@ -121,7 +121,7 @@ public class OpportunityService implements OpportunityApi {
 
     @Transactional(readOnly = true)
     public List&lt;LostAnalysisDto&gt; getLostAnalysis() {
-<span class="fc" id="L124">        return opportunityRepository.aggregateLostAnalysis();</span>
+<span class="nc" id="L124">        return opportunityRepository.aggregateLostAnalysis();</span>
     }
 
     // --- OpportunityApi Implementation ---
@@ -129,7 +129,7 @@ public class OpportunityService implements OpportunityApi {
     @Override
     @Transactional(readOnly = true)
     public Optional&lt;OpportunityResponseDto&gt; findOpportunityById(UUID opportunityId) {
-<span class="fc" id="L132">        return opportunityRepository.findById(opportunityId).map(opportunityMapper::toDto);</span>
+<span class="nc" id="L132">        return opportunityRepository.findById(opportunityId).map(opportunityMapper::toDto);</span>
     }
 
     @Override
@@ -141,9 +141,58 @@ public class OpportunityService implements OpportunityApi {
     @Override
     @Transactional(readOnly = true)
     public List&lt;OpportunityResponseDto&gt; findAllOpportunities() {
-<span class="fc" id="L144">        return opportunityRepository.findAll().stream()</span>
-<span class="fc" id="L145">                .map(opportunityMapper::toDto)</span>
-<span class="fc" id="L146">                .collect(Collectors.toList());</span>
+<span class="nc" id="L144">        return opportunityRepository.findAll().stream()</span>
+<span class="nc" id="L145">                .map(opportunityMapper::toDto)</span>
+<span class="nc" id="L146">                .collect(Collectors.toList());</span>
     }
+
+    @Transactional
+    public OpportunityResponseDto updateOpportunity(UUID id, OpportunityUpdateDto dto) {
+<span class="nc" id="L151">        Opportunity opportunity = opportunityRepository.findById(id)</span>
+<span class="nc" id="L152">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Opportunity not found with ID: &quot; + id));</span>
+
+<span class="nc" id="L154">        OpportunityStage oldStage = opportunity.getStage();</span>
+<span class="nc" id="L155">        opportunityMapper.updateEntityFromDto(dto, opportunity);</span>
+
+<span class="nc bnc" id="L157" title="All 4 branches missed.">        if (dto.getStage() != null &amp;&amp; dto.getStage() != oldStage) {</span>
+            // Re-trigger the stage change transition logic
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            if (dto.getStage() == OpportunityStage.WON) {</span>
+<span class="nc" id="L160">                opportunity.setClosedAt(Instant.now());</span>
+<span class="nc" id="L161">                log.info(&quot;Opportunity '{}' marked as WON!&quot;, id);</span>
+<span class="nc" id="L162">                eventPublisher.publish(TOPIC_DEAL_WON, id.toString(), DealWonEvent.builder()</span>
+<span class="nc" id="L163">                        .opportunityId(opportunity.getId())</span>
+<span class="nc" id="L164">                        .leadId(opportunity.getLeadId())</span>
+<span class="nc" id="L165">                        .title(opportunity.getTitle())</span>
+<span class="nc" id="L166">                        .amount(opportunity.getEstimatedValue())</span>
+<span class="nc" id="L167">                        .organizationId(opportunity.getOrganizationId())</span>
+<span class="nc" id="L168">                        .build());</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">            } else if (dto.getStage() == OpportunityStage.LOST) {</span>
+<span class="nc" id="L170">                opportunity.setLostReason(dto.getLostReason());</span>
+<span class="nc" id="L171">                opportunity.setClosedAt(Instant.now());</span>
+<span class="nc" id="L172">                log.info(&quot;Opportunity '{}' marked as LOST. Reason: '{}'&quot;, id, dto.getLostReason());</span>
+<span class="nc" id="L173">                eventPublisher.publish(TOPIC_DEAL_LOST, id.toString(), DealLostEvent.builder()</span>
+<span class="nc" id="L174">                        .opportunityId(opportunity.getId())</span>
+<span class="nc" id="L175">                        .leadId(opportunity.getLeadId())</span>
+<span class="nc" id="L176">                        .title(opportunity.getTitle())</span>
+<span class="nc" id="L177">                        .amount(opportunity.getEstimatedValue())</span>
+<span class="nc" id="L178">                        .lostReason(dto.getLostReason())</span>
+<span class="nc" id="L179">                        .organizationId(opportunity.getOrganizationId())</span>
+<span class="nc" id="L180">                        .build());</span>
+            }
+<span class="nc" id="L182">            auditApi.recordAudit(&quot;OPPORTUNITY&quot;, opportunity.getId().toString(), &quot;STAGE_CHANGE&quot;, &quot;user&quot;, oldStage.name(), dto.getStage().name());</span>
+        }
+
+<span class="nc" id="L185">        Opportunity saved = opportunityRepository.save(opportunity);</span>
+<span class="nc" id="L186">        log.info(&quot;Updated opportunity details for Opportunity ID: {}&quot;, id);</span>
+<span class="nc" id="L187">        return opportunityMapper.toDto(saved);</span>
+    }
+
+    @Transactional
+    public void deleteOpportunity(UUID id) {
+<span class="nc" id="L192">        Opportunity opportunity = opportunityRepository.findById(id)</span>
+<span class="nc" id="L193">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Opportunity not found with ID: &quot; + id));</span>
+<span class="nc" id="L194">        opportunityRepository.delete(opportunity);</span>
+<span class="nc" id="L195">        log.info(&quot;Soft deleted Opportunity ID: {}&quot;, id);</span>
+<span class="nc" id="L196">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

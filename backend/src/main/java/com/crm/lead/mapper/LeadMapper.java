@@ -2,6 +2,7 @@ package com.crm.lead.mapper;
 
 import com.crm.lead.api.dto.LeadCreateDto;
 import com.crm.lead.api.dto.LeadResponseDto;
+import com.crm.lead.api.dto.LeadUpdateDto;
 import com.crm.lead.entity.Lead;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,7 +17,17 @@ public interface LeadMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "organizationId", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
     Lead toEntity(LeadCreateDto dto);
 
     LeadResponseDto toDto(Lead lead);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "score", ignore = true)
+    @Mapping(target = "assignedRepId", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "organizationId", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    void updateEntityFromDto(LeadUpdateDto dto, @org.mapstruct.MappingTarget Lead entity);
 }

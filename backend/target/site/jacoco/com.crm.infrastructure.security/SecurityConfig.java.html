@@ -31,52 +31,53 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-<span class="fc" id="L34">        http</span>
-<span class="fc" id="L35">            .csrf(AbstractHttpConfigurer::disable)</span>
-<span class="fc" id="L36">            .sessionManagement(session -&gt; session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))</span>
-<span class="fc" id="L37">            .authenticationProvider(authenticationProvider())</span>
-<span class="fc" id="L38">            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)</span>
-<span class="fc" id="L39">            .exceptionHandling(ex -&gt; ex</span>
-<span class="fc" id="L40">                .authenticationEntryPoint((request, response, authException) -&gt; {</span>
-<span class="fc" id="L41">                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
-<span class="fc" id="L42">                    response.setContentType(&quot;application/json&quot;);</span>
-<span class="fc" id="L43">                    response.getWriter().write(String.format(</span>
+<span class="nc" id="L34">        http</span>
+<span class="nc" id="L35">            .csrf(AbstractHttpConfigurer::disable)</span>
+<span class="nc" id="L36">            .sessionManagement(session -&gt; session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))</span>
+<span class="nc" id="L37">            .authenticationProvider(authenticationProvider())</span>
+<span class="nc" id="L38">            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)</span>
+<span class="nc" id="L39">            .exceptionHandling(ex -&gt; ex</span>
+<span class="nc" id="L40">                .authenticationEntryPoint((request, response, authException) -&gt; {</span>
+<span class="nc" id="L41">                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
+<span class="nc" id="L42">                    response.setContentType(&quot;application/json&quot;);</span>
+<span class="nc" id="L43">                    response.getWriter().write(String.format(</span>
                         &quot;{\&quot;timestamp\&quot;:\&quot;%s\&quot;,\&quot;status\&quot;:401,\&quot;error\&quot;:\&quot;Unauthorized\&quot;,\&quot;message\&quot;:\&quot;Full authentication is required to access this resource\&quot;,\&quot;path\&quot;:\&quot;%s\&quot;}&quot;,
-<span class="fc" id="L45">                        java.time.Instant.now(),</span>
-<span class="fc" id="L46">                        request.getRequestURI()</span>
+<span class="nc" id="L45">                        java.time.Instant.now(),</span>
+<span class="nc" id="L46">                        request.getRequestURI()</span>
                     ));
-<span class="fc" id="L48">                })</span>
+<span class="nc" id="L48">                })</span>
             )
-<span class="fc" id="L50">            .authorizeHttpRequests(auth -&gt; auth</span>
-<span class="fc" id="L51">                .requestMatchers(</span>
+<span class="nc" id="L50">            .authorizeHttpRequests(auth -&gt; auth</span>
+<span class="nc" id="L51">                .requestMatchers(</span>
                     &quot;/actuator/**&quot;,
                     &quot;/swagger-ui.html&quot;,
                     &quot;/swagger-ui/**&quot;,
                     &quot;/v3/api-docs/**&quot;,
-                    &quot;/api/auth/**&quot;
-<span class="fc" id="L57">                ).permitAll()</span>
-<span class="fc" id="L58">                .anyRequest().authenticated()</span>
+                    &quot;/api/auth/**&quot;,
+                    &quot;/api/organizations/lookup&quot;
+<span class="nc" id="L58">                ).permitAll()</span>
+<span class="nc" id="L59">                .anyRequest().authenticated()</span>
             );
 
-<span class="fc" id="L61">        return http.build();</span>
+<span class="nc" id="L62">        return http.build();</span>
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-<span class="fc" id="L66">        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();</span>
-<span class="fc" id="L67">        authProvider.setUserDetailsService(userDetailsService);</span>
-<span class="fc" id="L68">        authProvider.setPasswordEncoder(passwordEncoder());</span>
-<span class="fc" id="L69">        return authProvider;</span>
+<span class="nc" id="L67">        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();</span>
+<span class="nc" id="L68">        authProvider.setUserDetailsService(userDetailsService);</span>
+<span class="nc" id="L69">        authProvider.setPasswordEncoder(passwordEncoder());</span>
+<span class="nc" id="L70">        return authProvider;</span>
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-<span class="fc" id="L74">        return config.getAuthenticationManager();</span>
+<span class="nc" id="L75">        return config.getAuthenticationManager();</span>
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-<span class="fc" id="L79">        return new BCryptPasswordEncoder();</span>
+<span class="nc" id="L80">        return new BCryptPasswordEncoder();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -129,4 +129,22 @@ public class LeadService implements LeadApi {
         }
         return map;
     }
+
+    @Transactional
+    public LeadResponseDto updateLead(UUID id, LeadUpdateDto dto) {
+        Lead lead = leadRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Lead not found with ID: " + id));
+        leadMapper.updateEntityFromDto(dto, lead);
+        Lead saved = leadRepository.save(lead);
+        log.info("Updated lead details for Lead ID: {}", id);
+        return leadMapper.toDto(saved);
+    }
+
+    @Transactional
+    public void deleteLead(UUID id) {
+        Lead lead = leadRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Lead not found with ID: " + id));
+        leadRepository.delete(lead);
+        log.info("Soft deleted Lead ID: {}", id);
+    }
 }

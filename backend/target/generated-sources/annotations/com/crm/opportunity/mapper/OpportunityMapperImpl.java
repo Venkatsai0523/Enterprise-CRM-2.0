@@ -2,14 +2,15 @@ package com.crm.opportunity.mapper;
 
 import com.crm.opportunity.api.dto.OpportunityCreateDto;
 import com.crm.opportunity.api.dto.OpportunityResponseDto;
+import com.crm.opportunity.api.dto.OpportunityUpdateDto;
 import com.crm.opportunity.entity.Opportunity;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-07-22T13:42:07+0530",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
+    date = "2026-07-22T19:42:01+0530",
+    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)"
 )
 @Component
 public class OpportunityMapperImpl implements OpportunityMapper {
@@ -48,5 +49,17 @@ public class OpportunityMapperImpl implements OpportunityMapper {
         opportunityResponseDto.updatedAt( opportunity.getUpdatedAt() );
 
         return opportunityResponseDto.build();
+    }
+
+    @Override
+    public void updateEntityFromDto(OpportunityUpdateDto dto, Opportunity entity) {
+        if ( dto == null ) {
+            return;
+        }
+
+        entity.setTitle( dto.getTitle() );
+        entity.setEstimatedValue( dto.getEstimatedValue() );
+        entity.setStage( dto.getStage() );
+        entity.setLostReason( dto.getLostReason() );
     }
 }

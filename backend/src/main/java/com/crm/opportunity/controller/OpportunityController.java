@@ -52,15 +52,34 @@ public class OpportunityController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')")
-    @Operation(summary = "Search and filter opportunities", description = "Retrieves paginated opportunities filtered by stage and lead ID")
+    @Operation(summary = "Search and filter opportunities", description = "Retrieves paginated opportunities filtered by stage and lead ID. Scoped implicitly to the caller's organizationId. Max page size: 100.")
     public ResponseEntity<Page<OpportunityResponseDto>> getOpportunities(
             @RequestParam(required = false) OpportunityStage stage,
             @RequestParam(required = false) UUID leadId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @jakarta.validation.constraints.Max(value = 100, message = "Page size must not exceed 100") @RequestParam(defaultValue = "10") int size
     ) {
         Page<OpportunityResponseDto> response = opportunityService.getOpportunitiesWithFilters(stage, leadId, page, size);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')")
+    @Operation(summary = "Update opportunity details", description = "Updates an existing opportunity's fields by ID. Scoped to the caller's organization.")
+    public ResponseEntity<OpportunityResponseDto> updateOpportunity(
+            @PathVariable UUID id,
+            @Valid @RequestBody OpportunityUpdateDto dto
+    ) {
+        OpportunityResponseDto response = opportunityService.updateOpportunity(id, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Soft delete an opportunity", description = "Soft deletes an opportunity by ID. Accessible by Admins and Managers.")
+    public ResponseEntity<Void> deleteOpportunity(@PathVariable UUID id) {
+        opportunityService.deleteOpportunity(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/analytics/lost-analysis")

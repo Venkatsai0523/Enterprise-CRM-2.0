@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-<span class="fc" id="L25">@Slf4j</span>
+<span class="nc" id="L25">@Slf4j</span>
 @SuppressWarnings(&quot;null&quot;)
 public class LeadService implements LeadApi {
 
@@ -36,46 +36,46 @@ public class LeadService implements LeadApi {
 
     @Transactional
     public LeadResponseDto createAndScoreLead(LeadCreateDto dto) {
-<span class="fc" id="L39">        Lead lead = leadMapper.toEntity(dto);</span>
-<span class="fc" id="L40">        lead.setStatus(LeadStatus.NEW);</span>
+<span class="nc" id="L39">        Lead lead = leadMapper.toEntity(dto);</span>
+<span class="nc" id="L40">        lead.setStatus(LeadStatus.NEW);</span>
 
         // 1. Calculate score synchronously
-<span class="fc" id="L43">        int score = leadScoringService.calculateScore(lead);</span>
-<span class="fc" id="L44">        lead.setScore(score);</span>
-<span class="fc" id="L45">        lead.setStatus(LeadStatus.SCORED);</span>
+<span class="nc" id="L43">        int score = leadScoringService.calculateScore(lead);</span>
+<span class="nc" id="L44">        lead.setScore(score);</span>
+<span class="nc" id="L45">        lead.setStatus(LeadStatus.SCORED);</span>
 
-<span class="fc" id="L47">        Lead savedLead = leadRepository.save(lead);</span>
-<span class="fc" id="L48">        log.info(&quot;Lead created and scored synchronously. Lead ID: {}, Score: {}&quot;, savedLead.getId(), score);</span>
+<span class="nc" id="L47">        Lead savedLead = leadRepository.save(lead);</span>
+<span class="nc" id="L48">        log.info(&quot;Lead created and scored synchronously. Lead ID: {}, Score: {}&quot;, savedLead.getId(), score);</span>
 
         // Record Audit
-<span class="fc" id="L51">        auditApi.recordAudit(&quot;LEAD&quot;, savedLead.getId().toString(), &quot;LEAD_CREATED&quot;, &quot;system&quot;, null, &quot;SCORED&quot;);</span>
+<span class="nc" id="L51">        auditApi.recordAudit(&quot;LEAD&quot;, savedLead.getId().toString(), &quot;LEAD_CREATED&quot;, &quot;system&quot;, null, &quot;SCORED&quot;);</span>
 
         // 2. Publish LeadScoredEvent to Kafka asynchronously
-<span class="fc" id="L54">        LeadScoredEvent event = LeadScoredEvent.builder()</span>
-<span class="fc" id="L55">                .leadId(savedLead.getId())</span>
-<span class="fc" id="L56">                .email(savedLead.getEmail())</span>
-<span class="fc" id="L57">                .companyName(savedLead.getCompanyName())</span>
-<span class="fc" id="L58">                .score(score)</span>
-<span class="fc" id="L59">                .organizationId(savedLead.getOrganizationId())</span>
-<span class="fc" id="L60">                .build();</span>
+<span class="nc" id="L54">        LeadScoredEvent event = LeadScoredEvent.builder()</span>
+<span class="nc" id="L55">                .leadId(savedLead.getId())</span>
+<span class="nc" id="L56">                .email(savedLead.getEmail())</span>
+<span class="nc" id="L57">                .companyName(savedLead.getCompanyName())</span>
+<span class="nc" id="L58">                .score(score)</span>
+<span class="nc" id="L59">                .organizationId(savedLead.getOrganizationId())</span>
+<span class="nc" id="L60">                .build();</span>
 
-<span class="fc" id="L62">        eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);</span>
+<span class="nc" id="L62">        eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);</span>
 
-<span class="fc" id="L64">        return leadMapper.toDto(savedLead);</span>
+<span class="nc" id="L64">        return leadMapper.toDto(savedLead);</span>
     }
 
     @Transactional(readOnly = true)
     public LeadResponseDto getLeadById(UUID id) {
-<span class="fc" id="L69">        Lead lead = leadRepository.findById(id)</span>
-<span class="fc" id="L70">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Lead not found with ID: &quot; + id));</span>
-<span class="fc" id="L71">        return leadMapper.toDto(lead);</span>
+<span class="nc" id="L69">        Lead lead = leadRepository.findById(id)</span>
+<span class="nc" id="L70">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Lead not found with ID: &quot; + id));</span>
+<span class="nc" id="L71">        return leadMapper.toDto(lead);</span>
     }
 
     @Transactional(readOnly = true)
     public Page&lt;LeadResponseDto&gt; getLeadsWithFilters(LeadStatus status, Integer minScore, Integer maxScore, int page, int size) {
-<span class="fc" id="L76">        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));</span>
-<span class="fc" id="L77">        return leadRepository.findWithFilters(status, minScore, maxScore, pageRequest)</span>
-<span class="fc" id="L78">                .map(leadMapper::toDto);</span>
+<span class="nc" id="L76">        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));</span>
+<span class="nc" id="L77">        return leadRepository.findWithFilters(status, minScore, maxScore, pageRequest)</span>
+<span class="nc" id="L78">                .map(leadMapper::toDto);</span>
     }
 
     // --- LeadApi Implementation ---
@@ -83,51 +83,69 @@ public class LeadService implements LeadApi {
     @Override
     @Transactional(readOnly = true)
     public Optional&lt;LeadResponseDto&gt; findLeadById(UUID leadId) {
-<span class="fc" id="L86">        return leadRepository.findById(leadId).map(leadMapper::toDto);</span>
+<span class="nc" id="L86">        return leadRepository.findById(leadId).map(leadMapper::toDto);</span>
     }
 
     @Override
     @Transactional
     public boolean updateStatus(UUID leadId, String newStatus) {
-<span class="fc" id="L92">        return leadRepository.findById(leadId).map(lead -&gt; {</span>
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">            String oldStatus = lead.getStatus() != null ? lead.getStatus().name() : null;</span>
-<span class="fc" id="L94">            lead.setStatus(LeadStatus.valueOf(newStatus));</span>
-<span class="fc" id="L95">            leadRepository.save(lead);</span>
-<span class="fc" id="L96">            auditApi.recordAudit(&quot;LEAD&quot;, lead.getId().toString(), &quot;STATUS_CHANGE&quot;, &quot;system&quot;, oldStatus, newStatus);</span>
-<span class="fc" id="L97">            return true;</span>
-<span class="fc" id="L98">        }).orElse(false);</span>
+<span class="nc" id="L92">        return leadRepository.findById(leadId).map(lead -&gt; {</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            String oldStatus = lead.getStatus() != null ? lead.getStatus().name() : null;</span>
+<span class="nc" id="L94">            lead.setStatus(LeadStatus.valueOf(newStatus));</span>
+<span class="nc" id="L95">            leadRepository.save(lead);</span>
+<span class="nc" id="L96">            auditApi.recordAudit(&quot;LEAD&quot;, lead.getId().toString(), &quot;STATUS_CHANGE&quot;, &quot;system&quot;, oldStatus, newStatus);</span>
+<span class="nc" id="L97">            return true;</span>
+<span class="nc" id="L98">        }).orElse(false);</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public long countLeads() {
-<span class="fc" id="L104">        return leadRepository.count();</span>
+<span class="nc" id="L104">        return leadRepository.count();</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public long countLeadsByStatus(String status) {
-<span class="fc" id="L110">        return leadRepository.countByStatus(LeadStatus.valueOf(status.toUpperCase()));</span>
+<span class="nc" id="L110">        return leadRepository.countByStatus(LeadStatus.valueOf(status.toUpperCase()));</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public double getAverageLeadScore() {
-<span class="fc" id="L116">        Double avg = leadRepository.getAverageScore();</span>
-<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        return avg != null ? avg : 0.0;</span>
+<span class="nc" id="L116">        Double avg = leadRepository.getAverageScore();</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        return avg != null ? avg : 0.0;</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public java.util.Map&lt;String, Long&gt; countLeadsBySource() {
-<span class="fc" id="L123">        java.util.List&lt;Object[]&gt; results = leadRepository.countByLeadSourceGrouped();</span>
-<span class="fc" id="L124">        java.util.Map&lt;String, Long&gt; map = new java.util.HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">        for (Object[] row : results) {</span>
-<span class="pc bpc" id="L126" title="1 of 2 branches missed.">            if (row[0] != null) {</span>
-<span class="fc" id="L127">                map.put(row[0].toString(), (Long) row[1]);</span>
+<span class="nc" id="L123">        java.util.List&lt;Object[]&gt; results = leadRepository.countByLeadSourceGrouped();</span>
+<span class="nc" id="L124">        java.util.Map&lt;String, Long&gt; map = new java.util.HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        for (Object[] row : results) {</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">            if (row[0] != null) {</span>
+<span class="nc" id="L127">                map.put(row[0].toString(), (Long) row[1]);</span>
             }
-<span class="fc" id="L129">        }</span>
-<span class="fc" id="L130">        return map;</span>
+<span class="nc" id="L129">        }</span>
+<span class="nc" id="L130">        return map;</span>
     }
+
+    @Transactional
+    public LeadResponseDto updateLead(UUID id, LeadUpdateDto dto) {
+<span class="nc" id="L135">        Lead lead = leadRepository.findById(id)</span>
+<span class="nc" id="L136">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Lead not found with ID: &quot; + id));</span>
+<span class="nc" id="L137">        leadMapper.updateEntityFromDto(dto, lead);</span>
+<span class="nc" id="L138">        Lead saved = leadRepository.save(lead);</span>
+<span class="nc" id="L139">        log.info(&quot;Updated lead details for Lead ID: {}&quot;, id);</span>
+<span class="nc" id="L140">        return leadMapper.toDto(saved);</span>
+    }
+
+    @Transactional
+    public void deleteLead(UUID id) {
+<span class="nc" id="L145">        Lead lead = leadRepository.findById(id)</span>
+<span class="nc" id="L146">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Lead not found with ID: &quot; + id));</span>
+<span class="nc" id="L147">        leadRepository.delete(lead);</span>
+<span class="nc" id="L148">        log.info(&quot;Soft deleted Lead ID: {}&quot;, id);</span>
+<span class="nc" id="L149">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

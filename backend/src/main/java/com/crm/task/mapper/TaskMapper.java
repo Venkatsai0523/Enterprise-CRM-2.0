@@ -15,6 +15,7 @@ public interface TaskMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "organizationId", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
     Task toEntity(TaskCreateDto dto);
 
     TaskResponseDto toDto(Task task);
@@ -23,5 +24,6 @@ public interface TaskMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "organizationId", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
     void updateEntityFromDto(TaskUpdateDto dto, @MappingTarget Task entity);
 }

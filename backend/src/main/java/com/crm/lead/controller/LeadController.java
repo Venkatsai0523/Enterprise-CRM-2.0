@@ -40,15 +40,34 @@ public class LeadController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')")
-    @Operation(summary = "Search and filter leads", description = "Retrieves paginated leads filtered by status and score range")
+    @Operation(summary = "Search and filter leads", description = "Retrieves paginated leads filtered by status and score range. Scoped implicitly to the caller's organizationId. Max page size: 100.")
     public ResponseEntity<Page<LeadResponseDto>> getLeads(
             @RequestParam(required = false) LeadStatus status,
             @RequestParam(required = false) Integer minScore,
             @RequestParam(required = false) Integer maxScore,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @jakarta.validation.constraints.Max(value = 100, message = "Page size must not exceed 100") @RequestParam(defaultValue = "10") int size
     ) {
         Page<LeadResponseDto> response = leadService.getLeadsWithFilters(status, minScore, maxScore, page, size);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')")
+    @Operation(summary = "Update lead details", description = "Updates an existing lead's fields by ID. Scoped to the caller's organization.")
+    public ResponseEntity<LeadResponseDto> updateLead(
+            @PathVariable UUID id,
+            @Valid @RequestBody LeadUpdateDto dto
+    ) {
+        LeadResponseDto response = leadService.updateLead(id, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Soft delete a lead", description = "Soft deletes a lead by ID. Accessible by Admins and Managers.")
+    public ResponseEntity<Void> deleteLead(@PathVariable UUID id) {
+        leadService.deleteLead(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -2,14 +2,15 @@ package com.crm.lead.mapper;
 
 import com.crm.lead.api.dto.LeadCreateDto;
 import com.crm.lead.api.dto.LeadResponseDto;
+import com.crm.lead.api.dto.LeadUpdateDto;
 import com.crm.lead.entity.Lead;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-07-22T13:42:06+0530",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
+    date = "2026-07-22T19:41:55+0530",
+    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)"
 )
 @Component
 public class LeadMapperImpl implements LeadMapper {
@@ -56,5 +57,21 @@ public class LeadMapperImpl implements LeadMapper {
         leadResponseDto.updatedAt( lead.getUpdatedAt() );
 
         return leadResponseDto.build();
+    }
+
+    @Override
+    public void updateEntityFromDto(LeadUpdateDto dto, Lead entity) {
+        if ( dto == null ) {
+            return;
+        }
+
+        entity.setFirstName( dto.getFirstName() );
+        entity.setLastName( dto.getLastName() );
+        entity.setEmail( dto.getEmail() );
+        entity.setPhone( dto.getPhone() );
+        entity.setCompanyName( dto.getCompanyName() );
+        entity.setCompanySize( dto.getCompanySize() );
+        entity.setLeadSource( dto.getLeadSource() );
+        entity.setStatus( dto.getStatus() );
     }
 }

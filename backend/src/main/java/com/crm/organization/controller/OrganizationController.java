@@ -4,6 +4,8 @@ import com.crm.organization.api.OrganizationApi;
 import com.crm.organization.api.dto.OrganizationCreateDto;
 import com.crm.organization.api.dto.OrganizationResponseDto;
 import com.crm.organization.api.dto.OrganizationUpdateDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,12 +19,24 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/organizations")
 @RequiredArgsConstructor
+@Tag(name = "Organization Management", description = "Tenant (organization) creation and lookup")
 public class OrganizationController {
 
     private final OrganizationApi organizationApi;
 
+    @GetMapping("/lookup")
+    @Operation(summary = "Lookup organization by subdomain", description = "Retrieves public organization details by subdomain without authentication")
+    public ResponseEntity<OrganizationResponseDto> lookupOrganization(
+            @RequestParam String subdomain
+    ) {
+        return organizationApi.findOrganizationBySubdomain(subdomain)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create a new organization", description = "Provisions a new tenant organization with a unique subdomain")
     public ResponseEntity<OrganizationResponseDto> createOrganization(
             @Valid @RequestBody OrganizationCreateDto dto
     ) {
@@ -32,6 +46,7 @@ public class OrganizationController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Get organization by ID", description = "Retrieves organization details by its UUID")
     public ResponseEntity<OrganizationResponseDto> getOrganizationById(
             @PathVariable UUID id
     ) {
@@ -42,6 +57,7 @@ public class OrganizationController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "List all organizations", description = "Retrieves all registered organizations")
     public ResponseEntity<List<OrganizationResponseDto>> getAllOrganizations() {
         List<OrganizationResponseDto> orgs = organizationApi.getAllOrganizations();
         return ResponseEntity.ok(orgs);
@@ -49,6 +65,7 @@ public class OrganizationController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update organization details", description = "Updates an organization's configuration and status")
     public ResponseEntity<OrganizationResponseDto> updateOrganization(
             @PathVariable UUID id,
             @Valid @RequestBody OrganizationUpdateDto dto

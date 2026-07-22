@@ -2,60 +2,77 @@
 
 import com.crm.lead.api.dto.LeadCreateDto;
 import com.crm.lead.api.dto.LeadResponseDto;
+import com.crm.lead.api.dto.LeadUpdateDto;
 import com.crm.lead.entity.Lead;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2026-07-22T13:42:06+0530&quot;,
+    date = &quot;2026-07-22T19:30:59+0530&quot;,
     comments = &quot;version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)&quot;
 )
 @Component
-<span class="fc" id="L15">public class LeadMapperImpl implements LeadMapper {</span>
+<span class="nc" id="L16">public class LeadMapperImpl implements LeadMapper {</span>
 
     @Override
     public Lead toEntity(LeadCreateDto dto) {
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if ( dto == null ) {</span>
-<span class="nc" id="L20">            return null;</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">        if ( dto == null ) {</span>
+<span class="nc" id="L21">            return null;</span>
         }
 
-<span class="fc" id="L23">        Lead.LeadBuilder lead = Lead.builder();</span>
+<span class="nc" id="L24">        Lead.LeadBuilder lead = Lead.builder();</span>
 
-<span class="fc" id="L25">        lead.firstName( dto.getFirstName() );</span>
-<span class="fc" id="L26">        lead.lastName( dto.getLastName() );</span>
-<span class="fc" id="L27">        lead.email( dto.getEmail() );</span>
-<span class="fc" id="L28">        lead.phone( dto.getPhone() );</span>
-<span class="fc" id="L29">        lead.companyName( dto.getCompanyName() );</span>
-<span class="fc" id="L30">        lead.companySize( dto.getCompanySize() );</span>
-<span class="fc" id="L31">        lead.leadSource( dto.getLeadSource() );</span>
+<span class="nc" id="L26">        lead.firstName( dto.getFirstName() );</span>
+<span class="nc" id="L27">        lead.lastName( dto.getLastName() );</span>
+<span class="nc" id="L28">        lead.email( dto.getEmail() );</span>
+<span class="nc" id="L29">        lead.phone( dto.getPhone() );</span>
+<span class="nc" id="L30">        lead.companyName( dto.getCompanyName() );</span>
+<span class="nc" id="L31">        lead.companySize( dto.getCompanySize() );</span>
+<span class="nc" id="L32">        lead.leadSource( dto.getLeadSource() );</span>
 
-<span class="fc" id="L33">        return lead.build();</span>
+<span class="nc" id="L34">        return lead.build();</span>
     }
 
     @Override
     public LeadResponseDto toDto(Lead lead) {
-<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if ( lead == null ) {</span>
-<span class="nc" id="L39">            return null;</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if ( lead == null ) {</span>
+<span class="nc" id="L40">            return null;</span>
         }
 
-<span class="fc" id="L42">        LeadResponseDto.LeadResponseDtoBuilder leadResponseDto = LeadResponseDto.builder();</span>
+<span class="nc" id="L43">        LeadResponseDto.LeadResponseDtoBuilder leadResponseDto = LeadResponseDto.builder();</span>
 
-<span class="fc" id="L44">        leadResponseDto.id( lead.getId() );</span>
-<span class="fc" id="L45">        leadResponseDto.firstName( lead.getFirstName() );</span>
-<span class="fc" id="L46">        leadResponseDto.lastName( lead.getLastName() );</span>
-<span class="fc" id="L47">        leadResponseDto.email( lead.getEmail() );</span>
-<span class="fc" id="L48">        leadResponseDto.phone( lead.getPhone() );</span>
-<span class="fc" id="L49">        leadResponseDto.companyName( lead.getCompanyName() );</span>
-<span class="fc" id="L50">        leadResponseDto.companySize( lead.getCompanySize() );</span>
-<span class="fc" id="L51">        leadResponseDto.leadSource( lead.getLeadSource() );</span>
-<span class="fc" id="L52">        leadResponseDto.status( lead.getStatus() );</span>
-<span class="fc" id="L53">        leadResponseDto.score( lead.getScore() );</span>
-<span class="fc" id="L54">        leadResponseDto.assignedRepId( lead.getAssignedRepId() );</span>
-<span class="fc" id="L55">        leadResponseDto.createdAt( lead.getCreatedAt() );</span>
-<span class="fc" id="L56">        leadResponseDto.updatedAt( lead.getUpdatedAt() );</span>
+<span class="nc" id="L45">        leadResponseDto.id( lead.getId() );</span>
+<span class="nc" id="L46">        leadResponseDto.firstName( lead.getFirstName() );</span>
+<span class="nc" id="L47">        leadResponseDto.lastName( lead.getLastName() );</span>
+<span class="nc" id="L48">        leadResponseDto.email( lead.getEmail() );</span>
+<span class="nc" id="L49">        leadResponseDto.phone( lead.getPhone() );</span>
+<span class="nc" id="L50">        leadResponseDto.companyName( lead.getCompanyName() );</span>
+<span class="nc" id="L51">        leadResponseDto.companySize( lead.getCompanySize() );</span>
+<span class="nc" id="L52">        leadResponseDto.leadSource( lead.getLeadSource() );</span>
+<span class="nc" id="L53">        leadResponseDto.status( lead.getStatus() );</span>
+<span class="nc" id="L54">        leadResponseDto.score( lead.getScore() );</span>
+<span class="nc" id="L55">        leadResponseDto.assignedRepId( lead.getAssignedRepId() );</span>
+<span class="nc" id="L56">        leadResponseDto.createdAt( lead.getCreatedAt() );</span>
+<span class="nc" id="L57">        leadResponseDto.updatedAt( lead.getUpdatedAt() );</span>
 
-<span class="fc" id="L58">        return leadResponseDto.build();</span>
+<span class="nc" id="L59">        return leadResponseDto.build();</span>
     }
+
+    @Override
+    public void updateEntityFromDto(LeadUpdateDto dto, Lead entity) {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if ( dto == null ) {</span>
+<span class="nc" id="L65">            return;</span>
+        }
+
+<span class="nc" id="L68">        entity.setFirstName( dto.getFirstName() );</span>
+<span class="nc" id="L69">        entity.setLastName( dto.getLastName() );</span>
+<span class="nc" id="L70">        entity.setEmail( dto.getEmail() );</span>
+<span class="nc" id="L71">        entity.setPhone( dto.getPhone() );</span>
+<span class="nc" id="L72">        entity.setCompanyName( dto.getCompanyName() );</span>
+<span class="nc" id="L73">        entity.setCompanySize( dto.getCompanySize() );</span>
+<span class="nc" id="L74">        entity.setLeadSource( dto.getLeadSource() );</span>
+<span class="nc" id="L75">        entity.setStatus( dto.getStatus() );</span>
+<span class="nc" id="L76">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

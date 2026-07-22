@@ -145,4 +145,53 @@ public class OpportunityService implements OpportunityApi {
                 .map(opportunityMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public OpportunityResponseDto updateOpportunity(UUID id, OpportunityUpdateDto dto) {
+        Opportunity opportunity = opportunityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Opportunity not found with ID: " + id));
+
+        OpportunityStage oldStage = opportunity.getStage();
+        opportunityMapper.updateEntityFromDto(dto, opportunity);
+
+        if (dto.getStage() != null && dto.getStage() != oldStage) {
+            // Re-trigger the stage change transition logic
+            if (dto.getStage() == OpportunityStage.WON) {
+                opportunity.setClosedAt(Instant.now());
+                log.info("Opportunity '{}' marked as WON!", id);
+                eventPublisher.publish(TOPIC_DEAL_WON, id.toString(), DealWonEvent.builder()
+                        .opportunityId(opportunity.getId())
+                        .leadId(opportunity.getLeadId())
+                        .title(opportunity.getTitle())
+                        .amount(opportunity.getEstimatedValue())
+                        .organizationId(opportunity.getOrganizationId())
+                        .build());
+            } else if (dto.getStage() == OpportunityStage.LOST) {
+                opportunity.setLostReason(dto.getLostReason());
+                opportunity.setClosedAt(Instant.now());
+                log.info("Opportunity '{}' marked as LOST. Reason: '{}'", id, dto.getLostReason());
+                eventPublisher.publish(TOPIC_DEAL_LOST, id.toString(), DealLostEvent.builder()
+                        .opportunityId(opportunity.getId())
+                        .leadId(opportunity.getLeadId())
+                        .title(opportunity.getTitle())
+                        .amount(opportunity.getEstimatedValue())
+                        .lostReason(dto.getLostReason())
+                        .organizationId(opportunity.getOrganizationId())
+                        .build());
+            }
+            auditApi.recordAudit("OPPORTUNITY", opportunity.getId().toString(), "STAGE_CHANGE", "user", oldStage.name(), dto.getStage().name());
+        }
+
+        Opportunity saved = opportunityRepository.save(opportunity);
+        log.info("Updated opportunity details for Opportunity ID: {}", id);
+        return opportunityMapper.toDto(saved);
+    }
+
+    @Transactional
+    public void deleteOpportunity(UUID id) {
+        Opportunity opportunity = opportunityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Opportunity not found with ID: " + id));
+        opportunityRepository.delete(opportunity);
+        log.info("Soft deleted Opportunity ID: {}", id);
+    }
 }

@@ -26,8 +26,8 @@ public class TaskController {
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')&quot;)
     @Operation(summary = &quot;Create a new task activity&quot;, description = &quot;Creates a task, schedules it, validates references, and publishes a Kafka task.assigned event&quot;)
     public ResponseEntity&lt;TaskResponseDto&gt; createTask(@Valid @RequestBody TaskCreateDto dto) {
-<span class="fc" id="L29">        TaskResponseDto response = taskService.createTask(dto);</span>
-<span class="fc" id="L30">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+<span class="nc" id="L29">        TaskResponseDto response = taskService.createTask(dto);</span>
+<span class="nc" id="L30">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
     }
 
     @GetMapping(&quot;/{id}&quot;)
@@ -40,14 +40,14 @@ public class TaskController {
 
     @GetMapping
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')&quot;)
-    @Operation(summary = &quot;Search and filter tasks&quot;, description = &quot;Retrieves paginated tasks filtered by assignee, status, and related entities&quot;)
+    @Operation(summary = &quot;Search and filter tasks&quot;, description = &quot;Retrieves paginated tasks filtered by assignee, status, and related entities. Max page size: 100.&quot;)
     public ResponseEntity&lt;Page&lt;TaskResponseDto&gt;&gt; getTasks(
             @RequestParam(required = false) UUID assignedTo,
             @RequestParam(required = false) TaskStatus status,
             @RequestParam(required = false) String relatedToType,
             @RequestParam(required = false) UUID relatedToId,
             @RequestParam(defaultValue = &quot;0&quot;) int page,
-            @RequestParam(defaultValue = &quot;10&quot;) int size
+            @jakarta.validation.constraints.Max(value = 100, message = &quot;Page size must not exceed 100&quot;) @RequestParam(defaultValue = &quot;10&quot;) int size
     ) {
 <span class="nc" id="L52">        Page&lt;TaskResponseDto&gt; response = taskService.getTasksWithFilters(assignedTo, status, relatedToType, relatedToId, page, size);</span>
 <span class="nc" id="L53">        return ResponseEntity.ok(response);</span>
@@ -65,8 +65,8 @@ public class TaskController {
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')&quot;)
     @Operation(summary = &quot;Update task status&quot;, description = &quot;Quick stage or status update for a task (e.g. mark COMPLETED)&quot;)
     public ResponseEntity&lt;TaskResponseDto&gt; updateTaskStatus(@PathVariable UUID id, @RequestParam TaskStatus status) {
-<span class="fc" id="L68">        TaskResponseDto response = taskService.updateTaskStatus(id, status);</span>
-<span class="fc" id="L69">        return ResponseEntity.ok(response);</span>
+<span class="nc" id="L68">        TaskResponseDto response = taskService.updateTaskStatus(id, status);</span>
+<span class="nc" id="L69">        return ResponseEntity.ok(response);</span>
     }
 
     @DeleteMapping(&quot;/{id}&quot;)

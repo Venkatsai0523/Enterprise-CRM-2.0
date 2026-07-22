@@ -2,52 +2,65 @@
 
 import com.crm.opportunity.api.dto.OpportunityCreateDto;
 import com.crm.opportunity.api.dto.OpportunityResponseDto;
+import com.crm.opportunity.api.dto.OpportunityUpdateDto;
 import com.crm.opportunity.entity.Opportunity;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
-    date = &quot;2026-07-22T13:42:07+0530&quot;,
+    date = &quot;2026-07-22T19:30:59+0530&quot;,
     comments = &quot;version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)&quot;
 )
 @Component
-<span class="fc" id="L15">public class OpportunityMapperImpl implements OpportunityMapper {</span>
+<span class="nc" id="L16">public class OpportunityMapperImpl implements OpportunityMapper {</span>
 
     @Override
     public Opportunity toEntity(OpportunityCreateDto dto) {
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if ( dto == null ) {</span>
-<span class="nc" id="L20">            return null;</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">        if ( dto == null ) {</span>
+<span class="nc" id="L21">            return null;</span>
         }
 
-<span class="fc" id="L23">        Opportunity.OpportunityBuilder opportunity = Opportunity.builder();</span>
+<span class="nc" id="L24">        Opportunity.OpportunityBuilder opportunity = Opportunity.builder();</span>
 
-<span class="fc" id="L25">        opportunity.title( dto.getTitle() );</span>
-<span class="fc" id="L26">        opportunity.leadId( dto.getLeadId() );</span>
-<span class="fc" id="L27">        opportunity.estimatedValue( dto.getEstimatedValue() );</span>
+<span class="nc" id="L26">        opportunity.title( dto.getTitle() );</span>
+<span class="nc" id="L27">        opportunity.leadId( dto.getLeadId() );</span>
+<span class="nc" id="L28">        opportunity.estimatedValue( dto.getEstimatedValue() );</span>
 
-<span class="fc" id="L29">        return opportunity.build();</span>
+<span class="nc" id="L30">        return opportunity.build();</span>
     }
 
     @Override
     public OpportunityResponseDto toDto(Opportunity opportunity) {
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if ( opportunity == null ) {</span>
-<span class="nc" id="L35">            return null;</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if ( opportunity == null ) {</span>
+<span class="nc" id="L36">            return null;</span>
         }
 
-<span class="fc" id="L38">        OpportunityResponseDto.OpportunityResponseDtoBuilder opportunityResponseDto = OpportunityResponseDto.builder();</span>
+<span class="nc" id="L39">        OpportunityResponseDto.OpportunityResponseDtoBuilder opportunityResponseDto = OpportunityResponseDto.builder();</span>
 
-<span class="fc" id="L40">        opportunityResponseDto.id( opportunity.getId() );</span>
-<span class="fc" id="L41">        opportunityResponseDto.title( opportunity.getTitle() );</span>
-<span class="fc" id="L42">        opportunityResponseDto.leadId( opportunity.getLeadId() );</span>
-<span class="fc" id="L43">        opportunityResponseDto.estimatedValue( opportunity.getEstimatedValue() );</span>
-<span class="fc" id="L44">        opportunityResponseDto.stage( opportunity.getStage() );</span>
-<span class="fc" id="L45">        opportunityResponseDto.lostReason( opportunity.getLostReason() );</span>
-<span class="fc" id="L46">        opportunityResponseDto.closedAt( opportunity.getClosedAt() );</span>
-<span class="fc" id="L47">        opportunityResponseDto.createdAt( opportunity.getCreatedAt() );</span>
-<span class="fc" id="L48">        opportunityResponseDto.updatedAt( opportunity.getUpdatedAt() );</span>
+<span class="nc" id="L41">        opportunityResponseDto.id( opportunity.getId() );</span>
+<span class="nc" id="L42">        opportunityResponseDto.title( opportunity.getTitle() );</span>
+<span class="nc" id="L43">        opportunityResponseDto.leadId( opportunity.getLeadId() );</span>
+<span class="nc" id="L44">        opportunityResponseDto.estimatedValue( opportunity.getEstimatedValue() );</span>
+<span class="nc" id="L45">        opportunityResponseDto.stage( opportunity.getStage() );</span>
+<span class="nc" id="L46">        opportunityResponseDto.lostReason( opportunity.getLostReason() );</span>
+<span class="nc" id="L47">        opportunityResponseDto.closedAt( opportunity.getClosedAt() );</span>
+<span class="nc" id="L48">        opportunityResponseDto.createdAt( opportunity.getCreatedAt() );</span>
+<span class="nc" id="L49">        opportunityResponseDto.updatedAt( opportunity.getUpdatedAt() );</span>
 
-<span class="fc" id="L50">        return opportunityResponseDto.build();</span>
+<span class="nc" id="L51">        return opportunityResponseDto.build();</span>
     }
+
+    @Override
+    public void updateEntityFromDto(OpportunityUpdateDto dto, Opportunity entity) {
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if ( dto == null ) {</span>
+<span class="nc" id="L57">            return;</span>
+        }
+
+<span class="nc" id="L60">        entity.setTitle( dto.getTitle() );</span>
+<span class="nc" id="L61">        entity.setEstimatedValue( dto.getEstimatedValue() );</span>
+<span class="nc" id="L62">        entity.setStage( dto.getStage() );</span>
+<span class="nc" id="L63">        entity.setLostReason( dto.getLostReason() );</span>
+<span class="nc" id="L64">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

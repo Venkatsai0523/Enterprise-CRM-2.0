@@ -18,6 +18,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@org.hibernate.annotations.SQLDelete(sql = "UPDATE opportunities SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@org.hibernate.annotations.SQLRestriction("deleted_at IS NULL")
 public class Opportunity {
 
     @Id
@@ -57,4 +59,7 @@ public class Opportunity {
     @org.hibernate.annotations.TenantId
     @Column(name = "organization_id", nullable = false)
     private UUID organizationId;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 }

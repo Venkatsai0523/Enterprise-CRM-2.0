@@ -4,6 +4,8 @@ import com.crm.workflow.api.dto.WorkflowRuleCreateDto;
 import com.crm.workflow.api.dto.WorkflowRuleResponseDto;
 import com.crm.workflow.api.dto.WorkflowRuleUpdateDto;
 import com.crm.workflow.service.WorkflowService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,44 +19,49 @@ import java.util.UUID;
 @RestController
 @RequestMapping(&quot;/api/workflows/rules&quot;)
 @RequiredArgsConstructor
+@Tag(name = &quot;Workflow Automation&quot;, description = &quot;Configurable trigger/condition/action rules&quot;)
 public class WorkflowRuleController {
 
     private final WorkflowService workflowService;
 
     @PostMapping
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MANAGER')&quot;)
+    @Operation(summary = &quot;Create workflow rule&quot;, description = &quot;Registers a new trigger rule with structured JSON conditions and automated actions&quot;)
     public ResponseEntity&lt;WorkflowRuleResponseDto&gt; createRule(
             @Valid @RequestBody WorkflowRuleCreateDto dto
     ) {
-<span class="fc" id="L29">        WorkflowRuleResponseDto created = workflowService.createRule(dto);</span>
-<span class="fc" id="L30">        return ResponseEntity.status(HttpStatus.CREATED).body(created);</span>
+<span class="nc" id="L33">        WorkflowRuleResponseDto created = workflowService.createRule(dto);</span>
+<span class="nc" id="L34">        return ResponseEntity.status(HttpStatus.CREATED).body(created);</span>
     }
 
     @PutMapping(&quot;/{id}&quot;)
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MANAGER')&quot;)
+    @Operation(summary = &quot;Update workflow rule&quot;, description = &quot;Updates rule metadata, conditions, or actions&quot;)
     public ResponseEntity&lt;WorkflowRuleResponseDto&gt; updateRule(
             @PathVariable UUID id,
             @Valid @RequestBody WorkflowRuleUpdateDto dto
     ) {
-<span class="nc" id="L39">        WorkflowRuleResponseDto updated = workflowService.updateRule(id, dto);</span>
-<span class="nc" id="L40">        return ResponseEntity.ok(updated);</span>
+<span class="nc" id="L44">        WorkflowRuleResponseDto updated = workflowService.updateRule(id, dto);</span>
+<span class="nc" id="L45">        return ResponseEntity.ok(updated);</span>
     }
 
     @GetMapping(&quot;/{id}&quot;)
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MANAGER', 'SALES_REP')&quot;)
+    @Operation(summary = &quot;Get workflow rule by ID&quot;, description = &quot;Retrieves workflow rule properties by UUID&quot;)
     public ResponseEntity&lt;WorkflowRuleResponseDto&gt; getRuleById(
             @PathVariable UUID id
     ) {
-<span class="nc" id="L48">        return workflowService.getRuleById(id)</span>
-<span class="nc" id="L49">                .map(ResponseEntity::ok)</span>
-<span class="nc" id="L50">                .orElse(ResponseEntity.notFound().build());</span>
+<span class="nc" id="L54">        return workflowService.getRuleById(id)</span>
+<span class="nc" id="L55">                .map(ResponseEntity::ok)</span>
+<span class="nc" id="L56">                .orElse(ResponseEntity.notFound().build());</span>
     }
 
     @GetMapping
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MANAGER', 'SALES_REP')&quot;)
+    @Operation(summary = &quot;List all workflow rules&quot;, description = &quot;Retrieves all workflow rules registered in the user's organization&quot;)
     public ResponseEntity&lt;List&lt;WorkflowRuleResponseDto&gt;&gt; getAllRules() {
-<span class="nc" id="L56">        List&lt;WorkflowRuleResponseDto&gt; rules = workflowService.getAllRules();</span>
-<span class="nc" id="L57">        return ResponseEntity.ok(rules);</span>
+<span class="nc" id="L63">        List&lt;WorkflowRuleResponseDto&gt; rules = workflowService.getAllRules();</span>
+<span class="nc" id="L64">        return ResponseEntity.ok(rules);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

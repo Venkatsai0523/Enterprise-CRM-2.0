@@ -4,6 +4,8 @@ import com.crm.analytics.api.dto.DashboardResponseDto;
 import com.crm.analytics.service.AnalyticsService;
 import com.crm.common.exception.BadRequestException;
 import com.crm.infrastructure.tenant.TenantContext;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,20 +18,22 @@ import java.util.UUID;
 @RestController
 @RequestMapping(&quot;/api/analytics&quot;)
 @RequiredArgsConstructor
+@Tag(name = &quot;Analytics &amp; Reporting&quot;, description = &quot;Cross-entity dashboard metrics&quot;)
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
     @GetMapping(&quot;/dashboard&quot;)
     @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MANAGER')&quot;)
+    @Operation(summary = &quot;Get dashboard analytics&quot;, description = &quot;Retrieves aggregate performance metrics across leads, opportunities, and tasks for the caller's organization. Cached in Redis.&quot;)
     public ResponseEntity&lt;DashboardResponseDto&gt; getDashboardAnalytics() {
-<span class="fc" id="L26">        UUID organizationId = TenantContext.getTenantId();</span>
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if (organizationId == null) {</span>
-<span class="nc" id="L28">            throw new BadRequestException(&quot;Tenant context not resolved.&quot;);</span>
+<span class="nc" id="L30">        UUID organizationId = TenantContext.getTenantId();</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (organizationId == null) {</span>
+<span class="nc" id="L32">            throw new BadRequestException(&quot;Tenant context not resolved.&quot;);</span>
         }
 
-<span class="fc" id="L31">        DashboardResponseDto dashboard = analyticsService.getDashboardAnalytics(organizationId);</span>
-<span class="fc" id="L32">        return ResponseEntity.ok(dashboard);</span>
+<span class="nc" id="L35">        DashboardResponseDto dashboard = analyticsService.getDashboardAnalytics(organizationId);</span>
+<span class="nc" id="L36">        return ResponseEntity.ok(dashboard);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

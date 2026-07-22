@@ -40,14 +40,14 @@ public class TaskController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SALES_REP', 'MANAGER')")
-    @Operation(summary = "Search and filter tasks", description = "Retrieves paginated tasks filtered by assignee, status, and related entities")
+    @Operation(summary = "Search and filter tasks", description = "Retrieves paginated tasks filtered by assignee, status, and related entities. Max page size: 100.")
     public ResponseEntity<Page<TaskResponseDto>> getTasks(
             @RequestParam(required = false) UUID assignedTo,
             @RequestParam(required = false) TaskStatus status,
             @RequestParam(required = false) String relatedToType,
             @RequestParam(required = false) UUID relatedToId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @jakarta.validation.constraints.Max(value = 100, message = "Page size must not exceed 100") @RequestParam(defaultValue = "10") int size
     ) {
         Page<TaskResponseDto> response = taskService.getTasksWithFilters(assignedTo, status, relatedToType, relatedToId, page, size);
         return ResponseEntity.ok(response);

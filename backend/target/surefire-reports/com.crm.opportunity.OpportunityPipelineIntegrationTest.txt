@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.crm.opportunity.OpportunityPipelineIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.471 s -- in com.crm.opportunity.OpportunityPipelineIntegrationTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.414 s -- in com.crm.opportunity.OpportunityPipelineIntegrationTest
