@@ -16,4 +16,6 @@ public interface IdentityApi {
     Optional<UserResponseDto> findUserByEmail(String email);
 
     boolean existsById(UUID userId);
+
+    java.util.List<UserResponseDto> findActiveUsersByRole(String roleName);
 }

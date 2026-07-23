@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Optional;
 
@@ -25,45 +25,47 @@ public class DealWonConsumer {
     private final CustomerDedupService customerDedupService;
     private final CustomerOpportunityLinkRepository linkRepository;
     private final LeadApi leadApi;
+    private final TransactionTemplate transactionTemplate;
 
     @KafkaListener(
             topics = KafkaTopicConfig.TOPIC_DEAL_WON,
             groupId = "${spring.kafka.consumer.group-id:nexus-crm-group}"
     )
-    @Transactional
     public void consumeDealWonEvent(DealWonEvent event) {
         com.crm.infrastructure.tenant.TenantContext.setTenantId(event.getOrganizationId());
         try {
             log.info("Received DealWonEvent for opportunity ID: {}, lead ID: {}", event.getOpportunityId(), event.getLeadId());
 
-            if (linkRepository.existsByOpportunityId(event.getOpportunityId())) {
-                log.info("Opportunity ID {} is already linked to a Customer Account, skipping (idempotent guard)", event.getOpportunityId());
-                return;
-            }
+            transactionTemplate.executeWithoutResult(status -> {
+                if (linkRepository.existsByOpportunityId(event.getOpportunityId())) {
+                    log.info("Opportunity ID {} is already linked to a Customer Account, skipping (idempotent guard)", event.getOpportunityId());
+                    return;
+                }
 
-            Optional<LeadResponseDto> leadOpt = leadApi.findLeadById(event.getLeadId());
-            if (leadOpt.isEmpty()) {
-                log.warn("Lead ID {} not found for deal conversion", event.getLeadId());
-                return;
-            }
+                Optional<LeadResponseDto> leadOpt = leadApi.findLeadById(event.getLeadId());
+                if (leadOpt.isEmpty()) {
+                    log.warn("Lead ID {} not found for deal conversion in tenant context {}", event.getLeadId(), event.getOrganizationId());
+                    return;
+                }
 
-            LeadResponseDto lead = leadOpt.get();
+                LeadResponseDto lead = leadOpt.get();
 
-            // 1. Perform deduplication & find/create CustomerAccount
-            CustomerAccount account = customerDedupService.findOrCreateCustomerAccount(lead);
+                // 1. Perform deduplication & find/create CustomerAccount
+                CustomerAccount account = customerDedupService.findOrCreateCustomerAccount(lead);
 
-            // 2. Link Opportunity to CustomerAccount
-            CustomerOpportunityLink link = CustomerOpportunityLink.builder()
-                    .customerAccountId(account.getId())
-                    .opportunityId(event.getOpportunityId())
-                    .build();
-            linkRepository.save(link);
+                // 2. Link Opportunity to CustomerAccount
+                CustomerOpportunityLink link = CustomerOpportunityLink.builder()
+                        .customerAccountId(account.getId())
+                        .opportunityId(event.getOpportunityId())
+                        .build();
+                linkRepository.save(link);
 
-            // 3. Mark Lead as CONVERTED in Lead domain
-            leadApi.updateStatus(lead.getId(), "CONVERTED");
+                // 3. Mark Lead as CONVERTED in Lead domain
+                leadApi.updateStatus(lead.getId(), "CONVERTED");
 
-            log.info("Successfully converted deal {} into Customer Account ID '{}' (Lead {} updated to CONVERTED)",
-                    event.getOpportunityId(), account.getId(), lead.getId());
+                log.info("Successfully converted deal {} into Customer Account ID '{}' (Lead {} updated to CONVERTED)",
+                        event.getOpportunityId(), account.getId(), lead.getId());
+            });
         } finally {
             com.crm.infrastructure.tenant.TenantContext.clear();
         }

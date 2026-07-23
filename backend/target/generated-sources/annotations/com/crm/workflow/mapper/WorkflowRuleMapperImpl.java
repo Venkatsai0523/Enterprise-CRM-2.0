@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-07-23T01:55:21+0530",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
+    date = "2026-07-23T13:58:22+0530",
+    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)"
 )
 @Component
 public class WorkflowRuleMapperImpl implements WorkflowRuleMapper {
@@ -23,11 +23,11 @@ public class WorkflowRuleMapperImpl implements WorkflowRuleMapper {
 
         WorkflowRule.WorkflowRuleBuilder workflowRule = WorkflowRule.builder();
 
-        workflowRule.name( dto.getName() );
-        workflowRule.description( dto.getDescription() );
-        workflowRule.triggerEvent( dto.getTriggerEvent() );
-        workflowRule.conditionsJson( dto.getConditionsJson() );
         workflowRule.actionsJson( dto.getActionsJson() );
+        workflowRule.conditionsJson( dto.getConditionsJson() );
+        workflowRule.description( dto.getDescription() );
+        workflowRule.name( dto.getName() );
+        workflowRule.triggerEvent( dto.getTriggerEvent() );
 
         return workflowRule.build();
     }
@@ -40,14 +40,14 @@ public class WorkflowRuleMapperImpl implements WorkflowRuleMapper {
 
         WorkflowRuleResponseDto.WorkflowRuleResponseDtoBuilder workflowRuleResponseDto = WorkflowRuleResponseDto.builder();
 
-        workflowRuleResponseDto.id( rule.getId() );
-        workflowRuleResponseDto.name( rule.getName() );
-        workflowRuleResponseDto.description( rule.getDescription() );
-        workflowRuleResponseDto.triggerEvent( rule.getTriggerEvent() );
-        workflowRuleResponseDto.conditionsJson( rule.getConditionsJson() );
         workflowRuleResponseDto.actionsJson( rule.getActionsJson() );
         workflowRuleResponseDto.active( rule.isActive() );
+        workflowRuleResponseDto.conditionsJson( rule.getConditionsJson() );
+        workflowRuleResponseDto.description( rule.getDescription() );
+        workflowRuleResponseDto.id( rule.getId() );
+        workflowRuleResponseDto.name( rule.getName() );
         workflowRuleResponseDto.organizationId( rule.getOrganizationId() );
+        workflowRuleResponseDto.triggerEvent( rule.getTriggerEvent() );
 
         return workflowRuleResponseDto.build();
     }
@@ -58,10 +58,10 @@ public class WorkflowRuleMapperImpl implements WorkflowRuleMapper {
             return;
         }
 
-        entity.setName( dto.getName() );
-        entity.setDescription( dto.getDescription() );
-        entity.setConditionsJson( dto.getConditionsJson() );
         entity.setActionsJson( dto.getActionsJson() );
         entity.setActive( dto.isActive() );
+        entity.setConditionsJson( dto.getConditionsJson() );
+        entity.setDescription( dto.getDescription() );
+        entity.setName( dto.getName() );
     }
 }

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-07-23T01:55:21+0530",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
+    date = "2026-07-23T13:58:22+0530",
+    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)"
 )
 @Component
 public class CustomerMapperImpl implements CustomerMapper {
@@ -21,13 +21,13 @@ public class CustomerMapperImpl implements CustomerMapper {
 
         CustomerAccountResponseDto.CustomerAccountResponseDtoBuilder customerAccountResponseDto = CustomerAccountResponseDto.builder();
 
-        customerAccountResponseDto.id( account.getId() );
         customerAccountResponseDto.accountName( account.getAccountName() );
-        customerAccountResponseDto.domainName( account.getDomainName() );
-        customerAccountResponseDto.primaryEmail( account.getPrimaryEmail() );
-        customerAccountResponseDto.phone( account.getPhone() );
-        customerAccountResponseDto.status( account.getStatus() );
         customerAccountResponseDto.createdAt( account.getCreatedAt() );
+        customerAccountResponseDto.domainName( account.getDomainName() );
+        customerAccountResponseDto.id( account.getId() );
+        customerAccountResponseDto.phone( account.getPhone() );
+        customerAccountResponseDto.primaryEmail( account.getPrimaryEmail() );
+        customerAccountResponseDto.status( account.getStatus() );
         customerAccountResponseDto.updatedAt( account.getUpdatedAt() );
 
         return customerAccountResponseDto.build();

@@ -60,9 +60,26 @@ public class LeadAssignmentService {
     }
 
     private UUID resolveRepId() {
-        // Query identity module via published IdentityApi interface
-        return identityApi.findUserByEmail("rep@nexus.com")
-                .map(UserResponseDto::getId)
-                .orElse(FALLBACK_REP_ID);
+        // Query identity module via published IdentityApi interface for active ROLE_SALES_REP users in the tenant
+        java.util.List<UserResponseDto> activeReps = identityApi.findActiveUsersByRole("ROLE_SALES_REP");
+        
+        if (activeReps.isEmpty()) {
+            log.warn("No active Sales Representatives found for tenant context auto-assignment. Falling back to {}", FALLBACK_REP_ID);
+            return FALLBACK_REP_ID;
+        }
+
+        UUID leastLoadedRepId = null;
+        long minLeadCount = Long.MAX_VALUE;
+
+        for (UserResponseDto rep : activeReps) {
+            long currentCount = leadRepository.countByAssignedRepId(rep.getId());
+            if (currentCount < minLeadCount) {
+                minLeadCount = currentCount;
+                leastLoadedRepId = rep.getId();
+            }
+        }
+
+        log.info("Resolved least-loaded Sales Rep ID: {} with {} active leads", leastLoadedRepId, minLeadCount);
+        return leastLoadedRepId != null ? leastLoadedRepId : FALLBACK_REP_ID;
     }
 }

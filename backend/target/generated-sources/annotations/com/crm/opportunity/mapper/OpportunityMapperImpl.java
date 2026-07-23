@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-07-23T01:55:20+0530",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
+    date = "2026-07-23T13:58:22+0530",
+    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)"
 )
 @Component
 public class OpportunityMapperImpl implements OpportunityMapper {
@@ -23,9 +23,9 @@ public class OpportunityMapperImpl implements OpportunityMapper {
 
         Opportunity.OpportunityBuilder opportunity = Opportunity.builder();
 
-        opportunity.title( dto.getTitle() );
-        opportunity.leadId( dto.getLeadId() );
         opportunity.estimatedValue( dto.getEstimatedValue() );
+        opportunity.leadId( dto.getLeadId() );
+        opportunity.title( dto.getTitle() );
 
         return opportunity.build();
     }
@@ -38,14 +38,14 @@ public class OpportunityMapperImpl implements OpportunityMapper {
 
         OpportunityResponseDto.OpportunityResponseDtoBuilder opportunityResponseDto = OpportunityResponseDto.builder();
 
-        opportunityResponseDto.id( opportunity.getId() );
-        opportunityResponseDto.title( opportunity.getTitle() );
-        opportunityResponseDto.leadId( opportunity.getLeadId() );
-        opportunityResponseDto.estimatedValue( opportunity.getEstimatedValue() );
-        opportunityResponseDto.stage( opportunity.getStage() );
-        opportunityResponseDto.lostReason( opportunity.getLostReason() );
         opportunityResponseDto.closedAt( opportunity.getClosedAt() );
         opportunityResponseDto.createdAt( opportunity.getCreatedAt() );
+        opportunityResponseDto.estimatedValue( opportunity.getEstimatedValue() );
+        opportunityResponseDto.id( opportunity.getId() );
+        opportunityResponseDto.leadId( opportunity.getLeadId() );
+        opportunityResponseDto.lostReason( opportunity.getLostReason() );
+        opportunityResponseDto.stage( opportunity.getStage() );
+        opportunityResponseDto.title( opportunity.getTitle() );
         opportunityResponseDto.updatedAt( opportunity.getUpdatedAt() );
 
         return opportunityResponseDto.build();
@@ -57,9 +57,9 @@ public class OpportunityMapperImpl implements OpportunityMapper {
             return;
         }
 
-        entity.setTitle( dto.getTitle() );
         entity.setEstimatedValue( dto.getEstimatedValue() );
-        entity.setStage( dto.getStage() );
         entity.setLostReason( dto.getLostReason() );
+        entity.setStage( dto.getStage() );
+        entity.setTitle( dto.getTitle() );
     }
 }

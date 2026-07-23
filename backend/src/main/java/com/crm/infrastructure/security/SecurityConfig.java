@@ -58,7 +58,8 @@ public class SecurityConfig {
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/api/auth/**",
-                    "/api/organizations/lookup"
+                    "/api/organizations/lookup",
+                    "/error"
                 ).permitAll()
                 .anyRequest().authenticated()
             );

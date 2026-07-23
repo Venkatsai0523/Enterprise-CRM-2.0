@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -44,7 +46,7 @@ public class LeadService implements LeadApi {
         lead.setScore(score);
         lead.setStatus(LeadStatus.SCORED);
 
-        Lead savedLead = leadRepository.save(lead);
+        Lead savedLead = leadRepository.saveAndFlush(lead);
         log.info("Lead created and scored synchronously. Lead ID: {}, Score: {}", savedLead.getId(), score);
 
         // Record Audit
@@ -59,7 +61,16 @@ public class LeadService implements LeadApi {
                 .organizationId(savedLead.getOrganizationId())
                 .build();
 
-        eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);
+                }
+            });
+        } else {
+            eventPublisher.publish(TOPIC_LEAD_SCORED, savedLead.getId().toString(), event);
+        }
 
         return leadMapper.toDto(savedLead);
     }

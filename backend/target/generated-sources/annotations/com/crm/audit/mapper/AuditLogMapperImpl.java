@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-07-23T01:55:21+0530",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
+    date = "2026-07-23T13:58:22+0530",
+    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)"
 )
 @Component
 public class AuditLogMapperImpl implements AuditLogMapper {
@@ -21,13 +21,13 @@ public class AuditLogMapperImpl implements AuditLogMapper {
 
         AuditLogResponseDto.AuditLogResponseDtoBuilder auditLogResponseDto = AuditLogResponseDto.builder();
 
-        auditLogResponseDto.id( auditLog.getId() );
-        auditLogResponseDto.entityName( auditLog.getEntityName() );
-        auditLogResponseDto.entityId( auditLog.getEntityId() );
         auditLogResponseDto.action( auditLog.getAction() );
-        auditLogResponseDto.performedBy( auditLog.getPerformedBy() );
-        auditLogResponseDto.oldState( auditLog.getOldState() );
+        auditLogResponseDto.entityId( auditLog.getEntityId() );
+        auditLogResponseDto.entityName( auditLog.getEntityName() );
+        auditLogResponseDto.id( auditLog.getId() );
         auditLogResponseDto.newState( auditLog.getNewState() );
+        auditLogResponseDto.oldState( auditLog.getOldState() );
+        auditLogResponseDto.performedBy( auditLog.getPerformedBy() );
         auditLogResponseDto.timestamp( auditLog.getTimestamp() );
 
         return auditLogResponseDto.build();

@@ -32,4 +32,6 @@ public interface LeadRepository extends JpaRepository<Lead, UUID> {
 
     @Query("SELECT l.leadSource, COUNT(l) FROM Lead l GROUP BY l.leadSource")
     java.util.List<Object[]> countByLeadSourceGrouped();
+
+    long countByAssignedRepId(java.util.UUID assignedRepId);
 }

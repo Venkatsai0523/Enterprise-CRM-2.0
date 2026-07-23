@@ -18,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import java.util.stream.Collectors;
 
 import java.time.Instant;
@@ -50,7 +52,7 @@ public class OpportunityService implements OpportunityApi {
         Opportunity opportunity = opportunityMapper.toEntity(dto);
         opportunity.setStage(OpportunityStage.PROSPECTING);
 
-        Opportunity savedOpportunity = opportunityRepository.save(opportunity);
+        Opportunity savedOpportunity = opportunityRepository.saveAndFlush(opportunity);
         log.info("Created opportunity ID: '{}' for lead ID: '{}'", savedOpportunity.getId(), dto.getLeadId());
 
         auditApi.recordAudit("OPPORTUNITY", savedOpportunity.getId().toString(), "OPPORTUNITY_CREATED", "user", null, "PROSPECTING");
@@ -70,33 +72,55 @@ public class OpportunityService implements OpportunityApi {
 
         if (dto.getStage() == OpportunityStage.WON) {
             opportunity.setClosedAt(Instant.now());
-            opportunityRepository.save(opportunity);
+            opportunityRepository.saveAndFlush(opportunity);
 
             log.info("Opportunity '{}' marked as WON!", opportunityId);
-            eventPublisher.publish(TOPIC_DEAL_WON, opportunityId.toString(), DealWonEvent.builder()
+            DealWonEvent event = DealWonEvent.builder()
                     .opportunityId(opportunity.getId())
                     .leadId(opportunity.getLeadId())
                     .title(opportunity.getTitle())
                     .amount(opportunity.getEstimatedValue())
                     .organizationId(opportunity.getOrganizationId())
-                    .build());
+                    .build();
+
+            if (TransactionSynchronizationManager.isSynchronizationActive()) {
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        eventPublisher.publish(TOPIC_DEAL_WON, opportunityId.toString(), event);
+                    }
+                });
+            } else {
+                eventPublisher.publish(TOPIC_DEAL_WON, opportunityId.toString(), event);
+            }
 
         } else if (dto.getStage() == OpportunityStage.LOST) {
             opportunity.setLostReason(dto.getLostReason());
             opportunity.setClosedAt(Instant.now());
-            opportunityRepository.save(opportunity);
+            opportunityRepository.saveAndFlush(opportunity);
 
             log.info("Opportunity '{}' marked as LOST. Reason: '{}'", opportunityId, dto.getLostReason());
-            eventPublisher.publish(TOPIC_DEAL_LOST, opportunityId.toString(), DealLostEvent.builder()
+            DealLostEvent event = DealLostEvent.builder()
                     .opportunityId(opportunity.getId())
                     .leadId(opportunity.getLeadId())
                     .title(opportunity.getTitle())
                     .amount(opportunity.getEstimatedValue())
                     .lostReason(dto.getLostReason())
                     .organizationId(opportunity.getOrganizationId())
-                    .build());
+                    .build();
+
+            if (TransactionSynchronizationManager.isSynchronizationActive()) {
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        eventPublisher.publish(TOPIC_DEAL_LOST, opportunityId.toString(), event);
+                    }
+                });
+            } else {
+                eventPublisher.publish(TOPIC_DEAL_LOST, opportunityId.toString(), event);
+            }
         } else {
-            opportunityRepository.save(opportunity);
+            opportunityRepository.saveAndFlush(opportunity);
         }
 
         auditApi.recordAudit("OPPORTUNITY", opportunity.getId().toString(), "STAGE_CHANGE", "user", oldStage.name(), dto.getStage().name());
@@ -154,36 +178,53 @@ public class OpportunityService implements OpportunityApi {
         OpportunityStage oldStage = opportunity.getStage();
         opportunityMapper.updateEntityFromDto(dto, opportunity);
 
+        Opportunity saved = opportunityRepository.saveAndFlush(opportunity);
+        log.info("Updated opportunity details for Opportunity ID: {}", id);
+
         if (dto.getStage() != null && dto.getStage() != oldStage) {
-            // Re-trigger the stage change transition logic
             if (dto.getStage() == OpportunityStage.WON) {
-                opportunity.setClosedAt(Instant.now());
-                log.info("Opportunity '{}' marked as WON!", id);
-                eventPublisher.publish(TOPIC_DEAL_WON, id.toString(), DealWonEvent.builder()
-                        .opportunityId(opportunity.getId())
-                        .leadId(opportunity.getLeadId())
-                        .title(opportunity.getTitle())
-                        .amount(opportunity.getEstimatedValue())
-                        .organizationId(opportunity.getOrganizationId())
-                        .build());
+                DealWonEvent event = DealWonEvent.builder()
+                        .opportunityId(saved.getId())
+                        .leadId(saved.getLeadId())
+                        .title(saved.getTitle())
+                        .amount(saved.getEstimatedValue())
+                        .organizationId(saved.getOrganizationId())
+                        .build();
+
+                if (TransactionSynchronizationManager.isSynchronizationActive()) {
+                    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            eventPublisher.publish(TOPIC_DEAL_WON, id.toString(), event);
+                        }
+                    });
+                } else {
+                    eventPublisher.publish(TOPIC_DEAL_WON, id.toString(), event);
+                }
             } else if (dto.getStage() == OpportunityStage.LOST) {
-                opportunity.setLostReason(dto.getLostReason());
-                opportunity.setClosedAt(Instant.now());
-                log.info("Opportunity '{}' marked as LOST. Reason: '{}'", id, dto.getLostReason());
-                eventPublisher.publish(TOPIC_DEAL_LOST, id.toString(), DealLostEvent.builder()
-                        .opportunityId(opportunity.getId())
-                        .leadId(opportunity.getLeadId())
-                        .title(opportunity.getTitle())
-                        .amount(opportunity.getEstimatedValue())
-                        .lostReason(dto.getLostReason())
-                        .organizationId(opportunity.getOrganizationId())
-                        .build());
+                DealLostEvent event = DealLostEvent.builder()
+                        .opportunityId(saved.getId())
+                        .leadId(saved.getLeadId())
+                        .title(saved.getTitle())
+                        .amount(saved.getEstimatedValue())
+                        .lostReason(saved.getLostReason())
+                        .organizationId(saved.getOrganizationId())
+                        .build();
+
+                if (TransactionSynchronizationManager.isSynchronizationActive()) {
+                    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            eventPublisher.publish(TOPIC_DEAL_LOST, id.toString(), event);
+                        }
+                    });
+                } else {
+                    eventPublisher.publish(TOPIC_DEAL_LOST, id.toString(), event);
+                }
             }
-            auditApi.recordAudit("OPPORTUNITY", opportunity.getId().toString(), "STAGE_CHANGE", "user", oldStage.name(), dto.getStage().name());
+            auditApi.recordAudit("OPPORTUNITY", saved.getId().toString(), "STAGE_CHANGE", "user", oldStage.name(), dto.getStage().name());
         }
 
-        Opportunity saved = opportunityRepository.save(opportunity);
-        log.info("Updated opportunity details for Opportunity ID: {}", id);
         return opportunityMapper.toDto(saved);
     }
 

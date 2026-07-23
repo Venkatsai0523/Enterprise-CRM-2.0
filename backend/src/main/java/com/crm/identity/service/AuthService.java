@@ -109,6 +109,42 @@ public class AuthService implements IdentityApi {
         }
     }
 
+    @Transactional
+    public UserResponseDto createUser(UserCreateDto dto, UUID orgId) {
+        if (userRepository.existsByEmailBypassingTenant(dto.getEmail())) {
+            throw new BadRequestException("Email is already registered: " + dto.getEmail());
+        }
+
+        // --- Resolve role ---
+        String targetRoleName = dto.getRoleName().trim();
+        if (!targetRoleName.startsWith("ROLE_")) {
+            targetRoleName = "ROLE_" + targetRoleName;
+        }
+        final String resolvedRoleName = targetRoleName;
+        Role role = roleRepository.findByName(resolvedRoleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + resolvedRoleName));
+
+        // --- Build and save user ---
+        User user = User.builder()
+                .email(dto.getEmail())
+                .passwordHash(passwordEncoder.encode(dto.getPassword()))
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .enabled(true)
+                .roles(Set.of(role))
+                .organizationId(orgId)
+                .build();
+
+        TenantContext.setTenantId(orgId);
+        try {
+            User savedUser = userRepository.saveAndFlush(user);
+            log.info("Created user '{}' for organization id={} by admin", dto.getEmail(), orgId);
+            return userMapper.toDto(savedUser);
+        } finally {
+            TenantContext.clear();
+        }
+    }
+
     @Transactional(readOnly = true)
     public JwtResponseDto login(LoginRequestDto dto) {
         authenticationManager.authenticate(
@@ -184,5 +220,13 @@ public class AuthService implements IdentityApi {
     @Transactional(readOnly = true)
     public boolean existsById(UUID userId) {
         return userRepository.existsById(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.List<UserResponseDto> findActiveUsersByRole(String roleName) {
+        return userRepository.findActiveUsersByRole(roleName).stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

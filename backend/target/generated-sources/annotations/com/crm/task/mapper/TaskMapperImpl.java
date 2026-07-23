@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-07-23T01:55:21+0530",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
+    date = "2026-07-23T13:58:22+0530",
+    comments = "version: 1.6.3, compiler: Eclipse JDT (IDE) 3.46.100.v20260624-0231, environment: Java 21.0.11 (Eclipse Adoptium)"
 )
 @Component
 public class TaskMapperImpl implements TaskMapper {
@@ -23,15 +23,15 @@ public class TaskMapperImpl implements TaskMapper {
 
         Task.TaskBuilder task = Task.builder();
 
-        task.title( dto.getTitle() );
+        task.assignedTo( dto.getAssignedTo() );
         task.description( dto.getDescription() );
         task.dueDate( dto.getDueDate() );
         task.priority( dto.getPriority() );
-        task.status( dto.getStatus() );
-        task.type( dto.getType() );
-        task.assignedTo( dto.getAssignedTo() );
-        task.relatedToType( dto.getRelatedToType() );
         task.relatedToId( dto.getRelatedToId() );
+        task.relatedToType( dto.getRelatedToType() );
+        task.status( dto.getStatus() );
+        task.title( dto.getTitle() );
+        task.type( dto.getType() );
 
         return task.build();
     }
@@ -44,17 +44,17 @@ public class TaskMapperImpl implements TaskMapper {
 
         TaskResponseDto.TaskResponseDtoBuilder taskResponseDto = TaskResponseDto.builder();
 
-        taskResponseDto.id( task.getId() );
-        taskResponseDto.title( task.getTitle() );
+        taskResponseDto.assignedTo( task.getAssignedTo() );
+        taskResponseDto.createdAt( task.getCreatedAt() );
         taskResponseDto.description( task.getDescription() );
         taskResponseDto.dueDate( task.getDueDate() );
+        taskResponseDto.id( task.getId() );
         taskResponseDto.priority( task.getPriority() );
-        taskResponseDto.status( task.getStatus() );
-        taskResponseDto.type( task.getType() );
-        taskResponseDto.assignedTo( task.getAssignedTo() );
-        taskResponseDto.relatedToType( task.getRelatedToType() );
         taskResponseDto.relatedToId( task.getRelatedToId() );
-        taskResponseDto.createdAt( task.getCreatedAt() );
+        taskResponseDto.relatedToType( task.getRelatedToType() );
+        taskResponseDto.status( task.getStatus() );
+        taskResponseDto.title( task.getTitle() );
+        taskResponseDto.type( task.getType() );
         taskResponseDto.updatedAt( task.getUpdatedAt() );
 
         return taskResponseDto.build();
@@ -66,14 +66,14 @@ public class TaskMapperImpl implements TaskMapper {
             return;
         }
 
-        entity.setTitle( dto.getTitle() );
+        entity.setAssignedTo( dto.getAssignedTo() );
         entity.setDescription( dto.getDescription() );
         entity.setDueDate( dto.getDueDate() );
         entity.setPriority( dto.getPriority() );
-        entity.setStatus( dto.getStatus() );
-        entity.setType( dto.getType() );
-        entity.setAssignedTo( dto.getAssignedTo() );
-        entity.setRelatedToType( dto.getRelatedToType() );
         entity.setRelatedToId( dto.getRelatedToId() );
+        entity.setRelatedToType( dto.getRelatedToType() );
+        entity.setStatus( dto.getStatus() );
+        entity.setTitle( dto.getTitle() );
+        entity.setType( dto.getType() );
     }
 }

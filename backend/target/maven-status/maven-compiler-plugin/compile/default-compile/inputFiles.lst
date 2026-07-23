@@ -35,6 +35,7 @@ C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\JwtResponseDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\LoginRequestDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\TokenRefreshRequestDto.java
+C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\UserCreateDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\UserRegistrationDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\dto\UserResponseDto.java
 C:\Users\badri\OneDrive\Desktop\Enterprise CRM 2.0\backend\src\main\java\com\crm\identity\api\IdentityApi.java
